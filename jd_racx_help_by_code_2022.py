@@ -26,4 +26,5 @@ from MR_util.racx_util_2022 import help_by_invite_code
 
 
 if __name__ == '__main__':
-    help_by_invite_code()
+    import asyncio
+    asyncio.get_event_loop().run_until_complete(help_by_invite_code())
