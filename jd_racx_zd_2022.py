@@ -4,12 +4,14 @@ export RabbitToken="token值"
 export ZD_ReverseCk=0 或 1 或 2
 export ZD_HELP_PIN="pin1,pin2,pin3"
 export ZD_HELP_NUM=200
+export ZD_GROUP_MAX_NUM=30
 
 变量:
 RabbitToken： 机器人给你发的token
 ZD_HELP_PIN：设置车头pin
 ZD_HELP_NUM：设置前多少个号为车头,设置了pin时，这个设置失效
 ZD_ReverseCk：0：正序，1：反序，2：乱序
+ZD_GROUP_MAX_NUM：每个队伍的人数
 
 log剩余次数大于5000方可使用
 '''
