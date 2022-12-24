@@ -70,9 +70,9 @@ class XMFUserClass(UserClass):
         else:
             print_api_error(opt, status)
 
-    def queryInteractiveInfo(self, reward=False):
+    def queryInteractiveInfo(self, reward=False, ext={}):
         try:
-            body = {"encryptProjectId": self.projectId, "sourceCode": "acexinpin0823", "ext": {}}
+            body = {"encryptProjectId": self.projectId, "sourceCode": "acexinpin0823", "ext": ext}
             if reward:
                 body = {
                     "encryptProjectId": self.giftProjectId,
@@ -154,21 +154,14 @@ class XMFUserClass(UserClass):
         taskList = self.queryInteractiveInfo()
         if taskList:
             for vo in taskList:
-                if vo.get('encryptAssignmentId') == '44M5m7wZs5vDAMkaTmYXeppqTsZR' or (
-                        vo.get("ext") and vo['ext'].get('extraType') != 'brandMemberList' and vo['ext'].get(
-                        'extraType') != 'assistTaskDetail'):
+                if vo.get("ext") and vo['ext'].get('extraType') != 'brandMemberList' and vo['ext'].get(
+                        'extraType') != 'assistTaskDetail':
                     if vo['completionCnt'] < vo['assignmentTimesLimit']:
+                        printf(
+                            f"[{self.Name}]任务：{vo['assignmentName']}，进度：{vo['completionCnt']}/{vo['assignmentTimesLimit']}，去完成")
                         if self.risk:
                             printf(f"[{self.Name}]\t黑号了，跳过该账号")
                             return
-                        printf(
-                            f"[{self.Name}]任务：{vo['assignmentName']}，进度：{vo['completionCnt']}/{vo['assignmentTimesLimit']}，去完成")
-                        if vo.get('encryptAssignmentId') == '44M5m7wZs5vDAMkaTmYXeppqTsZR':
-                            for i in range(vo['assignmentTimesLimit']):
-                                randomWait(2, 1)
-                                if vo['completionCnt'] < vo['assignmentTimesLimit']:
-                                    self.doInteractiveAssignment(vo['encryptAssignmentId'], itemId=None, completionFlag=True)
-                                    vo['completionCnt'] += 1
                         if vo['ext']:
                             if vo['ext']['extraType'] == 'sign1':
                                 self.doInteractiveAssignment(vo['encryptAssignmentId'],
@@ -211,9 +204,23 @@ class XMFUserClass(UserClass):
                                 return
                             if vi['status'] == 1 and vo['completionCnt'] < vo['assignmentTimesLimit']:
                                 self.doInteractiveAssignment(vo['encryptAssignmentId'], vi['itemId'], 1)
-                                wait(500)
+                                randomWait(1, 1)
                                 vo['completionCnt'] += 1
                         randomWait(2, 1)
+                    else:
+                        printf(
+                            f"[{self.Name}]任务：{vo['assignmentName']}，进度：{vo['completionCnt']}/{vo['assignmentTimesLimit']}，已完成")
+                elif vo.get("ext") and vo['ext'].get('extraType') == 'brandMemberList':
+                    pass
+                else:
+                    if vo['completionCnt'] < vo['assignmentTimesLimit']:
+                        printf(
+                            f"[{self.Name}]任务：{vo['assignmentName']}，进度：{vo['completionCnt']}/{vo['assignmentTimesLimit']}，去完成")
+                        for i in range(vo['assignmentTimesLimit']):
+                            randomWait(2, 1)
+                            if vo['completionCnt'] < vo['assignmentTimesLimit']:
+                                self.doInteractiveAssignment(vo['encryptAssignmentId'], itemId=None, completionFlag=True)
+                                vo['completionCnt'] += 1
                     else:
                         printf(
                             f"[{self.Name}]任务：{vo['assignmentName']}，进度：{vo['completionCnt']}/{vo['assignmentTimesLimit']}，已完成")
