@@ -1,5 +1,5 @@
 '''
-new Env('热爱穿行-助力-2022');
+new Env('炸年兽-助力-2022');
 export RabbitToken="token值"
 export HELP_ReverseCk=0 或 1 或 2
 export HELP_HELP_PIN="pin1,pin2,pin3"
