@@ -15,6 +15,7 @@ ZNS_PZ_READ_FILE_CK：读取ck文件，默认false，ck文件为ZNS_ZD_ck.txt，
 
 log剩余次数大于5000方可使用
 '''
+
 from utils.common import UserClass, printf, print_api_error, print_trace, TaskClass
 
 
@@ -22,10 +23,10 @@ class ZnsPZUserClass(UserClass):
     def __init__(self, cookie):
         super(ZnsPZUserClass, self).__init__(cookie)
         self.inviteCode = ""
-        self.name = "ZNS"
         self.force_app_ck = True
         self.appname = "50174"
         self._help_num = None
+        self.secretp = ''
         self.Origin = "https://h5.m.jd.com"
         self.referer = "https://h5.m.jd.com/"
 
@@ -37,7 +38,7 @@ class ZnsPZUserClass(UserClass):
             "log": True,
             "params": {
                 "appid": "signed_wh5",
-                "client": "m",
+                "client": "wh5",
                 "clientVersion": "-1",
                 "osVersion": "-1",
             }
@@ -66,13 +67,13 @@ class ZnsPZUserClass(UserClass):
             status, result = self.jd_api(self.opt(opt))
             if result and result.get("code") == 0:
                 if result.get("data") and result['data'].get('bizCode') == 0:
-                    for item in result['data']['result']:
-                        if item and item.get("divideResultVO") and item["divideResultVO"].get("divideValue"):
-                            printf(
-                                f"开启组队红包咯，分到了{item['divideResultVO']['divideValue']}元，最高膨胀到{item['divideResultVO']['maxInflateAward']}元")
-                        else:
-                            printf(f"开组队红包失败: {result['msg']}")
-                            return ""
+                    item = result['data']['result']['poplist'][0]
+                    if item and item.get("divideResultVO") and item["divideResultVO"].get("divideValue"):
+                        self.printf(
+                            f"开启组队红包咯，分到了{item['divideResultVO']['divideValue']}元，最高膨胀到{item['divideResultVO']['maxInflateAward']}元")
+                    else:
+                        self.printf(f"开组队红包失败: {result['msg']}")
+                        return ""
                 else:
                     msg = result['data']['bizMsg']
                     if "火爆" in msg:
@@ -80,14 +81,14 @@ class ZnsPZUserClass(UserClass):
                     elif "环境异常" in msg:
                         self.black = True
                     print_api_error(opt, status)
-                    printf(f"[{self.Name}]\t{msg}")
+                    self.printf(msg)
             else:
                 msg = result['msg']
                 if '登陆失败' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
-                printf(f"[{self.Name}]\t{msg}")
+                self.printf(msg)
         except:
             print_trace()
 
@@ -109,14 +110,43 @@ class ZnsPZUserClass(UserClass):
                     elif "环境异常" in msg:
                         self.black = True
                     print_api_error(opt, status)
-                    printf(f"[{self.Name}]\t{msg}")
+                    self.printf(msg)
             else:
                 msg = result['msg']
                 if '登陆失败' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
-                printf(f"[{self.Name}]\t{msg}")
+                self.printf(msg)
+        except:
+            print_trace()
+
+    def promote_getHomeData(self):
+        if self.secretp:
+            return
+        try:
+            opt = {
+                "functionId": "promote_getHomeData"
+            }
+            status, result = self.jd_api(self.opt(opt))
+            if result and result.get("code") == 0:
+                if result.get("data") and result['data'].get('bizCode') == 0:
+                    self.secretp = result['data']['result']['homeMainInfo']['secretp']
+                else:
+                    msg = result['data']['bizMsg']
+                    if "火爆" in msg:
+                        self.black = True
+                    elif "环境异常" in msg:
+                        self.black = True
+                    print_api_error(opt, status)
+                    self.printf(msg)
+            else:
+                msg = result['msg']
+                if '登陆失败' in msg:
+                    self.valid = False
+                    self.can_help = False
+                    self.need_help = False
+                self.printf(msg)
         except:
             print_trace()
 
@@ -130,7 +160,7 @@ class ZnsPZUserClass(UserClass):
             status, result = self.jd_api(self.opt(opt))
             if result and result.get("code") == 0:
                 if result.get("data") and result['data'].get('bizCode') == 0:
-                    printf(f"[{self.Name}]\t领取膨胀红包成功: {result['data']['result']['value']}元")
+                    self.printf(f"领取膨胀红包成功: {result['data']['result']['value']}元")
                 else:
                     msg = result['data']['bizMsg']
                     if "火爆" in msg:
@@ -138,14 +168,14 @@ class ZnsPZUserClass(UserClass):
                     elif "环境异常" in msg:
                         self.black = True
                     print_api_error(opt, status)
-                    printf(f"[{self.Name}]\t{msg}")
+                    self.printf(f"[{self.Name}]\t{msg}")
             else:
                 msg = result['msg']
                 if '登陆失败' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
-                printf(f"[{self.Name}]\t{msg}")
+                self.printf(f"{msg}")
         except:
             print_trace()
 
@@ -163,7 +193,7 @@ class ZnsPZUserClass(UserClass):
             if result and result.get("code") == 0:
                 if result.get("data") and result['data'].get('bizCode') == 0:
                     self.inviteCode = result["data"]["result"].get("inviteId")
-                    printf(f"{self.Name}【膨胀邀请码】: \t{self.inviteCode}")
+                    self.printf(f"【膨胀邀请码】: \t{self.inviteCode}")
                     self.need_help = True
                 else:
                     self.need_help = False
@@ -175,19 +205,21 @@ class ZnsPZUserClass(UserClass):
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
-                printf(f"[{self.Name}]\t{msg}")
+                self.printf(f"{msg}")
         except:
             self.need_help = False
             print_trace()
 
     def help(self, inviter):
         try:
+            self.promote_getHomeData()
+            if not self.can_help:
+                return
             if inviter.help_num >= inviter.MAX_HELP_NUM:
                 inviter.need_help = False
                 printf(f"车头[{inviter.Name}]\t 助力已满({inviter.help_num}/{inviter.MAX_HELP_NUM})")
                 return
             body = {
-                "actionType": 0,
                 "inviteId": inviter.inviteCode,
             }
             opt = {
@@ -200,7 +232,7 @@ class ZnsPZUserClass(UserClass):
             if code == 0:
                 if res_data['data'].get("bizCode") == 0:
                     inviter.help_num += 1
-                    printf(f"\t助力[{inviter.Name}]成功, 已邀请: {inviter.help_num}/{inviter.MAX_HELP_NUM}")
+                    self.printf(f"助力[{inviter.Name}]成功, 已邀请: {inviter.help_num}/{inviter.MAX_HELP_NUM}")
                 else:
                     msg = res_data['data'].get("bizMsg", "")
                     if '未登录' in msg:
@@ -218,20 +250,21 @@ class ZnsPZUserClass(UserClass):
                         inviter.need_help = False
                         inviter.promote_pk_getAmountForecast()
                         inviter.promote_pk_receiveAward()
-                    printf(f"\t助力失败[{code}]: {msg}")
+                    self.printf(f"助力失败[{code}]: {msg}")
             else:
                 msg = res_data['msg']
                 if '登陆失败' in msg:
                     self.valid = False
                     self.can_help = False
-                printf(F"[{self.Name}]\t{msg}")
+                    self.need_help = False
+                self.printf(f"{msg}")
         except:
             print_trace()
 
 
 if __name__ == '__main__':
     task = TaskClass("invite")
-    task.MAX_HELP_NUM = 100
+    task.MAX_HELP_NUM = 32
     task.name = 'ZNS_PZ'
     task.init_config(ZnsPZUserClass)
     task.main("炸年兽-膨胀")

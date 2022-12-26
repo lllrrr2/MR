@@ -25,8 +25,21 @@ class ZnsHelpUserClass(UserClass):
         self.force_app_ck = True
         self.appname = "50174"
         self._help_num = None
+        self._error = 0
         self.Origin = "https://h5.m.jd.com"
         self.referer = "https://h5.m.jd.com/"
+
+    @property
+    def error(self):
+        return self._error
+
+    @error.setter
+    def error(self, value):
+        self._error = value
+        if self._error >= 3:
+            self.black = True
+            self.need_help = False
+            self.can_help = False
 
     def opt(self, opt):
         self.set_joyytoken()
@@ -68,7 +81,7 @@ class ZnsHelpUserClass(UserClass):
                 if result.get("data") and result['data'].get('bizCode') == 0:
                     self.help_num = result['data']['result']['taskVos'][0]['times']
                     self.inviteCode = result['data']['result']['inviteId']
-                    printf(f"{self.Name}【助力码】: \t{self.inviteCode}")
+                    self.printf(f"【助力码】: \t{self.inviteCode}")
                     self.need_help = True
                 else:
                     msg = result['data'].get("bizMsg", "")
@@ -91,7 +104,7 @@ class ZnsHelpUserClass(UserClass):
                 if '登陆失败' in msg:
                     self.valid = False
                     self.can_help = False
-                printf(F"[{self.Name}]\t{msg}")
+                self.printf(f"{msg}")
         except:
             print_trace()
 
@@ -114,7 +127,7 @@ class ZnsHelpUserClass(UserClass):
             if code == 0:
                 if res_data['data'].get("bizCode") == 0:
                     inviter.help_num += 1
-                    printf(f"\t助力[{inviter.Name}]成功, 已邀请: {inviter.help_num}/{inviter.MAX_HELP_NUM}")
+                    self.printf(f"助力[{inviter.Name}]成功, 已邀请: {inviter.help_num}/{inviter.MAX_HELP_NUM}")
                 else:
                     msg = res_data['data'].get("bizMsg", "")
                     if '未登录' in msg:
@@ -123,18 +136,19 @@ class ZnsHelpUserClass(UserClass):
                     elif '次数用完啦' in msg:
                         self.can_help = False
                     elif '火爆' in msg:
-                        pass
+                        inviter.error += 1
+                        self.error += 1
                     elif '邀请过' in msg:
                         pass
                     elif '好友人气爆棚了' in msg:
                         inviter.need_help = False
-                    printf(f"\t助力失败[{code}]: {msg}")
+                    self.printf(f"助力失败[{code}]: {msg}")
             else:
                 msg = res_data['msg']
                 if '登陆失败' in msg:
                     self.valid = False
                     self.can_help = False
-                printf(F"[{self.Name}]\t{msg}")
+                self.printf(f"{msg}")
         except:
             print_trace()
 

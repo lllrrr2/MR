@@ -67,8 +67,8 @@ class ZnsZDUserClass(UserClass):
                 if result.get("data") and result['data'].get('bizCode') == 0:
                     self.help_num = result['data']['result']['groupInfo']['groupNum']
                     self.inviteCode = result['data']['result']['groupInfo']['groupJoinInviteId']
-                    printf(f"{self.Name}【当前队伍】: \t{result['data']['result']['groupInfo']['groupName']}")
-                    printf(f"{self.Name}【助力码】: \t{self.inviteCode}")
+                    self.printf(f"【当前队伍】: \t{result['data']['result']['groupInfo']['groupName']}")
+                    self.printf(f"【助力码】: \t{self.inviteCode}")
                     self.need_help = True
                 else:
                     self.need_help = False
@@ -80,7 +80,7 @@ class ZnsZDUserClass(UserClass):
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
-                printf(f"[{self.Name}]\t{msg}")
+                self.printf(f"{msg}")
         except:
             self.need_help = False
             print_trace()
@@ -104,7 +104,7 @@ class ZnsZDUserClass(UserClass):
             if code == 0:
                 if res_data['data'].get("bizCode") == 0:
                     inviter.help_num += 1
-                    printf(f"\t助力[{inviter.Name}]成功, 已邀请: {inviter.help_num}/{inviter.MAX_HELP_NUM}")
+                    self.printf(f"助力[{inviter.Name}]成功, 已邀请: {inviter.help_num}/{inviter.MAX_HELP_NUM}")
                 else:
                     msg = res_data['data'].get("bizMsg", "")
                     if '未登录' in msg:
@@ -118,13 +118,13 @@ class ZnsZDUserClass(UserClass):
                         pass
                     elif '满员' in msg:
                         inviter.need_help = False
-                    printf(f"\t助力失败[{code}]: {msg}")
+                    self.printf(f"助力失败[{code}]: {msg}")
             else:
                 msg = res_data['msg']
                 if '登陆失败' in msg:
                     self.valid = False
                     self.can_help = False
-                printf(F"[{self.Name}]\t{msg}")
+                self.printf(f"\t{msg}")
         except:
             print_trace()
 
