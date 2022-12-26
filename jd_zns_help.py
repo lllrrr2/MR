@@ -73,7 +73,7 @@ class ZnsHelpUserClass(UserClass):
                     if '未登录' in msg:
                         self.valid = False
                         self.can_help = False
-                    elif '上限' in msg:
+                    elif '次数用完啦' in msg:
                         self.can_help = False
                     elif '火爆' in msg:
                         self.need_help = False
