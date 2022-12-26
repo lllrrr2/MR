@@ -135,7 +135,7 @@ class ZnsHelpUserClass(UserClass):
             if code == 0:
                 if res_data['data'].get("bizCode") == 0:
                     inviter.help_num += 1
-                    self.printf(f"助力[{inviter.Name}]成功, 已邀请: {inviter.help_num}/{inviter.MAX_HELP_NUM}")
+                    self.printf(f"助力[{inviter.Name}]成功({inviter.help_num}/{inviter.MAX_HELP_NUM})")
                 else:
                     msg = res_data['data'].get("bizMsg", "")
                     if '未登录' in msg:
