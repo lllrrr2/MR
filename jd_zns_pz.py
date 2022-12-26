@@ -22,6 +22,7 @@ class ZnsPZUserClass(UserClass):
     def __init__(self, cookie):
         super(ZnsPZUserClass, self).__init__(cookie)
         self.inviteCode = ""
+        self.name = "ZNS"
         self.force_app_ck = True
         self.appname = "50174"
         self._help_num = None
@@ -149,6 +150,8 @@ class ZnsPZUserClass(UserClass):
             print_trace()
 
     def get_invite_code(self):
+        self.promote_pk_getMsgPopup()
+        self.promote_pk_getAmountForecast()
         try:
             body = {}
             opt = {
@@ -190,6 +193,7 @@ class ZnsPZUserClass(UserClass):
             opt = {
                 "functionId": "promote_pk_collectPkExpandScore",
                 "body": body,
+                "log": True
             }
             status, res_data = self.jd_api(self.opt(opt))
             code = res_data['code']
