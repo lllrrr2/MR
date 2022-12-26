@@ -69,7 +69,9 @@ class ZnsZDUserClass(UserClass):
                     self.inviteCode = result['data']['result']['groupInfo']['groupJoinInviteId']
                     printf(f"{self.Name}【当前队伍】: \t{result['data']['result']['groupInfo']['groupName']}")
                     printf(f"{self.Name}【助力码】: \t{self.inviteCode}")
+                    self.need_help = True
                 else:
+                    self.need_help = False
                     print_api_error(opt, status)
                     print(result)
             else:
@@ -78,8 +80,9 @@ class ZnsZDUserClass(UserClass):
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
-                printf(F"[{self.Name}]\t{msg}")
+                printf(f"[{self.Name}]\t{msg}")
         except:
+            self.need_help = False
             print_trace()
 
     def help(self, inviter):

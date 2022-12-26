@@ -63,11 +63,13 @@ class ZnsHelpUserClass(UserClass):
                 "need_log": False
             }
             status, result = self.jd_api(self.opt(opt))
+            self.need_help = False
             if result and result.get("code") == 0:
                 if result.get("data") and result['data'].get('bizCode') == 0:
                     self.help_num = result['data']['result']['taskVos'][0]['times']
                     self.inviteCode = result['data']['result']['inviteId']
                     printf(f"{self.Name}【助力码】: \t{self.inviteCode}")
+                    self.need_help = True
                 else:
                     msg = result['data'].get("bizMsg", "")
                     if '未登录' in msg:
@@ -89,7 +91,6 @@ class ZnsHelpUserClass(UserClass):
                 if '登陆失败' in msg:
                     self.valid = False
                     self.can_help = False
-                    self.need_help = False
                 printf(F"[{self.Name}]\t{msg}")
         except:
             print_trace()
