@@ -26,7 +26,7 @@ except ImportError:
     print("缺依赖，尝试进行修复，也可手动修复： pip3 install requests pycryptodome")
     os.system('pip3 install pycryptodome requests')
 
-from MR_util.racx_util_2022 import main_zd
+from MR_util.zns_util_2022 import main_zd
 
 
 if __name__ == '__main__':
