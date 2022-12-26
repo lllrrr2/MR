@@ -1,3 +1,21 @@
+'''
+new Env('炸年兽-2023');
+export RabbitToken="token值"
+export ZNS_CK_REVERSE="0 或 1 或 2"
+export ZNS_HELP_PIN="1~3或pin1,pin2,pin3或者ALL"
+export ZNS_MAX_HELP_NUM=30
+export ZNS_READ_FILE_CK="默认false" # ck文件为ZNS_ZD_ck.txt，格式为一行一个ck
+
+变量:
+RabbitToken： 机器人给你发的token
+ZNS_HELP_PIN：设置车头
+ZNS_CK_REVERSE：0：正序，1：反序，2：乱序
+ZNS_MAX_HELP_NUM：每个队伍的人数
+ZNS_READ_FILE_CK：读取ck文件，默认false，ck文件为ZNS_ZD_ck.txt，格式为一行一个ck
+
+log剩余次数大于5000方可使用
+'''
+
 from utils.common import UserClass, print_trace, print_api_error, printf, wait, randomWait, TaskClass
 
 
@@ -5,7 +23,6 @@ class ZnsUserClass(UserClass):
     def __init__(self, cookie):
         super(ZnsUserClass, self).__init__(cookie)
         self.force_app_ck = True
-        self.name = "ZNS"
         self.appname = "50174"
         self._help_num = None
         self.maxLevel = False
@@ -429,6 +446,7 @@ class ZnsUserClass(UserClass):
             return {}
 
     def main(self):
+        self.printf("开始执行！")
         self.promote_getHomeData()
         if self.black:
             return

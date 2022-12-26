@@ -1,4 +1,20 @@
-import os
+'''
+new Env('发财挖宝-助力');
+export RabbitToken="token值"
+export FCWB_HELP_CK_REVERSE="0 或 1 或 2"
+export FCWB_HELP_HELP_PIN="1~3或pin1,pin2,pin3或者ALL"
+export FCWB_HELP_MAX_HELP_NUM=30
+export FCWB_HELP_READ_FILE_CK="默认false" # ck文件为ZNS_ZD_ck.txt，格式为一行一个ck
+
+变量:
+RabbitToken： 机器人给你发的token
+FCWB_HELP_HELP_PIN：设置车头
+FCWB_HELP_CK_REVERSE：0：正序，1：反序，2：乱序
+FCWB_HELP_MAX_HELP_NUM：每个队伍的人数
+FCWB_HELP_READ_FILE_CK：读取ck文件，默认false，ck文件为ZNS_ZD_ck.txt，格式为一行一个ck
+
+log剩余次数大于5000方可使用
+'''
 
 from utils.common import UserClass, printf, print_api_error, print_trace, TaskClass
 
@@ -144,7 +160,7 @@ class FcwbUserClass(UserClass):
 
 if __name__ == '__main__':
     task = TaskClass("invite")
-    task.MAX_HELP_NUM = 30
-    task.name = 'FCWB'
+    task.MAX_HELP_NUM = 60
+    task.name = 'FCWB_HELP'
     task.init_config(FcwbUserClass)
     task.main("发财挖宝-助力")

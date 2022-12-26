@@ -1,3 +1,21 @@
+'''
+new Env('点点券');
+export RabbitToken="token值"
+export DDQ_CK_REVERSE="0 或 1 或 2"
+export DDQ_HELP_PIN="1~3或pin1,pin2,pin3或者ALL"
+export DDQ_MAX_HELP_NUM=30
+export DDQ_READ_FILE_CK="默认false" # ck文件为ZNS_ZD_ck.txt，格式为一行一个ck
+
+变量:
+RabbitToken： 机器人给你发的token
+DDQ_HELP_PIN：设置车头
+DDQ_CK_REVERSE：0：正序，1：反序，2：乱序
+DDQ_MAX_HELP_NUM：每个队伍的人数
+DDQ_READ_FILE_CK：读取ck文件，默认false，ck文件为ZNS_ZD_ck.txt，格式为一行一个ck
+
+log剩余次数大于5000方可使用
+'''
+
 import json
 import time
 from urllib.parse import quote
