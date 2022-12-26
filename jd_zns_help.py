@@ -69,6 +69,19 @@ class ZnsHelpUserClass(UserClass):
                     self.inviteCode = result['data']['result']['inviteId']
                     printf(f"{self.Name}【助力码】: \t{self.inviteCode}")
                 else:
+                    msg = result['data'].get("bizMsg", "")
+                    if '未登录' in msg:
+                        self.valid = False
+                        self.can_help = False
+                    elif '上限' in msg:
+                        self.can_help = False
+                    elif '火爆' in msg:
+                        self.need_help = False
+                        self.can_help = False
+                    elif '邀请过' in msg:
+                        pass
+                    elif '好友人气爆棚了' in msg:
+                        self.can_help = False
                     print_api_error(opt, status)
                     print(result)
             else:

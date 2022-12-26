@@ -107,7 +107,7 @@ class ZnsZDUserClass(UserClass):
                     if '未登录' in msg:
                         self.valid = False
                         self.can_help = False
-                    elif '上限' in msg:
+                    elif '已经有团队' in msg:
                         self.can_help = False
                     elif '火爆' in msg:
                         pass
