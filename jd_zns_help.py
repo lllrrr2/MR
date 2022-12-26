@@ -73,7 +73,7 @@ class ZnsHelpUserClass(UserClass):
                     if '未登录' in msg:
                         self.valid = False
                         self.can_help = False
-                    elif '次数用完啦' in msg:
+                    elif '助力次数用完啦' in msg:
                         self.can_help = False
                     elif '火爆' in msg:
                         self.need_help = False
@@ -119,7 +119,7 @@ class ZnsHelpUserClass(UserClass):
                     if '未登录' in msg:
                         self.valid = False
                         self.can_help = False
-                    elif '上限' in msg:
+                    elif '次数用完啦' in msg:
                         self.can_help = False
                     elif '火爆' in msg:
                         pass
@@ -130,7 +130,7 @@ class ZnsHelpUserClass(UserClass):
                     printf(f"\t助力失败[{code}]: {msg}")
             else:
                 msg = res_data['msg']
-                if '登录失败' in msg:
+                if '登陆失败' in msg:
                     self.valid = False
                     self.can_help = False
                 printf(F"[{self.Name}]\t{msg}")

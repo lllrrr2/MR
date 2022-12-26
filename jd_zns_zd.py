@@ -110,7 +110,7 @@ class ZnsZDUserClass(UserClass):
                     elif '已经有团队' in msg:
                         self.can_help = False
                     elif '火爆' in msg:
-                        pass
+                        self.can_help = False
                     elif '邀请过' in msg:
                         pass
                     elif '满员' in msg:
@@ -118,7 +118,7 @@ class ZnsZDUserClass(UserClass):
                     printf(f"\t助力失败[{code}]: {msg}")
             else:
                 msg = res_data['msg']
-                if '登录失败' in msg:
+                if '登陆失败' in msg:
                     self.valid = False
                     self.can_help = False
                 printf(F"[{self.Name}]\t{msg}")
