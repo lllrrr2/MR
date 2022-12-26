@@ -15,6 +15,8 @@ ZNS_ZD_READ_FILE_CK：读取ck文件，默认false，ck文件为ZNS_ZD_ck.txt，
 
 log剩余次数大于5000方可使用
 '''
+import json
+
 from utils.common import UserClass, printf, print_api_error, print_trace, TaskClass
 
 
@@ -43,6 +45,12 @@ class ZnsZDUserClass(UserClass):
         }
         _opt.update(opt)
         return _opt
+
+    def log_format(self, body, log_data):
+        body.update({"log": log_data["log"]})
+        body.update({"random": log_data["random"]})
+        body = f"body={json.dumps(body, separators=(',', ':'))}"
+        return body
 
     @property
     def help_num(self):
