@@ -50,7 +50,10 @@ class ZnsPZUserClass(UserClass):
     def log_format(self, body, log_data):
         body.update({"log": log_data["log"]})
         body.update({"random": log_data["random"]})
-        body = f"body={json.dumps(body, separators=(',', ':'))}"
+        # body = f"body={json.dumps(body, separators=(',', ':'))}"
+        body = {
+            "body": json.dumps(body, separators=(',', ':'))
+        }
         return body
 
     @property
