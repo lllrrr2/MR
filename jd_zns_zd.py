@@ -140,7 +140,7 @@ class ZnsZDUserClass(UserClass):
 
 
 if __name__ == '__main__':
-    task = TaskClass("help")
+    task = TaskClass("zd")
     task.MAX_HELP_NUM = 30
     task.name = 'ZNS_ZD'
     task.init_config(ZnsZDUserClass)
