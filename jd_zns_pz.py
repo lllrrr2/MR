@@ -37,11 +37,10 @@ class ZnsPZUserClass(UserClass):
         _opt = {
             "method": "post",
             "log": True,
-            "params": {
+            "body_param": {
                 "appid": "signed_wh5",
                 "client": "wh5",
-                "clientVersion": "-1",
-                "osVersion": "-1",
+                "clientVersion": "-1"
             }
         }
         _opt.update(opt)

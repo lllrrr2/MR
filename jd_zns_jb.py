@@ -15,6 +15,7 @@ ZNS_READ_FILE_CK：读取ck文件，默认false，ck文件为ZNS_ZD_ck.txt，格
 
 log剩余次数大于5000方可使用
 '''
+import json
 
 from utils.common import UserClass, print_trace, print_api_error, printf, wait, randomWait, TaskClass
 
@@ -45,15 +46,23 @@ class ZnsUserClass(UserClass):
         _opt = {
             "method": "post",
             "log": False,
-            "params": {
+            "body_param": {
                 "appid": "signed_wh5",
                 "client": "m",
-                "clientVersion": "-1",
-                "osVersion": "-1",
+                "clientVersion": "-1"
             }
         }
         _opt.update(opt)
         return _opt
+
+    def log_format(self, body, log_data):
+        body.update({"log": log_data["log"]})
+        body.update({"random": log_data["random"]})
+        # body = f"body={json.dumps(body, separators=(',', ':'))}"
+        body = {
+            "body": json.dumps(body, separators=(',', ':'))
+        }
+        return body
 
     def promote_getHomeData(self):
         try:
