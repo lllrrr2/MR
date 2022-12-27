@@ -1,7 +1,7 @@
 '''
 new Env('炸年兽-2023');
 export RabbitToken="token值"
-export ZNS_CK_REVERSE="0 或 1 或 2"
+export ZNS_CK_REVERSE="1 或 2 或 3"
 export ZNS_HELP_PIN="1~3或pin1,pin2,pin3或者ALL"
 export ZNS_MAX_HELP_NUM=30
 export ZNS_READ_FILE_CK="默认false" # ck文件为ZNS_ZD_ck.txt，格式为一行一个ck
@@ -9,7 +9,7 @@ export ZNS_READ_FILE_CK="默认false" # ck文件为ZNS_ZD_ck.txt，格式为一�
 变量:
 RabbitToken： 机器人给你发的token
 ZNS_HELP_PIN：设置车头
-ZNS_CK_REVERSE：0：正序，1：反序，2：乱序
+ZNS_CK_REVERSE：1：正序，2：反序，3：乱序
 ZNS_MAX_HELP_NUM：每个队伍的人数
 ZNS_READ_FILE_CK：读取ck文件，默认false，ck文件为ZNS_ZD_ck.txt，格式为一行一个ck
 
@@ -46,11 +46,10 @@ class ZnsUserClass(UserClass):
         _opt = {
             "method": "post",
             "log": False,
-            "params": {
+            "body_param": {
                 "appid": "signed_wh5",
                 "client": "m",
                 "clientVersion": "-1",
-                "osVersion": "-1",
             }
         }
         _opt.update(opt)
@@ -59,7 +58,10 @@ class ZnsUserClass(UserClass):
     def log_format(self, body, log_data):
         body.update({"log": log_data["log"]})
         body.update({"random": log_data["random"]})
-        body = f"body={json.dumps(body, separators=(',', ':'))}"
+        # body = f"body={json.dumps(body, separators=(',', ':'))}"
+        body = {
+            "body": json.dumps(body, separators=(',', ':'))
+        }
         return body
 
     def promote_getHomeData(self):
@@ -255,7 +257,7 @@ class ZnsUserClass(UserClass):
             opt = {
                 "functionId": "promote_getBadgeAward",
                 "body": body,
-                "params": {
+                "body_param": {
                     "appid": "signed_wh5",
                     "client": "wh5",
                     "clientVersion": "1.0.0",
@@ -451,7 +453,7 @@ class ZnsUserClass(UserClass):
             return {}
 
     def main(self):
-        self.printf("开始执行！")
+        self.printf("\n开始执行！")
         self.promote_getHomeData()
         if self.black:
             return

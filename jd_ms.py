@@ -1,7 +1,7 @@
 '''
 new Env('秒秒币');
 export RabbitToken="token值"
-export MS_CK_REVERSE="0 或 1 或 2"
+export MS_CK_REVERSE="1 或 2 或 3"
 export MS_HELP_PIN="1~3或pin1,pin2,pin3或者ALL"
 export MS_MAX_HELP_NUM=30
 export MS_READ_FILE_CK="默认false" # ck文件为ZNS_ZD_ck.txt，格式为一行一个ck
@@ -9,7 +9,7 @@ export MS_READ_FILE_CK="默认false" # ck文件为ZNS_ZD_ck.txt，格式为一�
 变量:
 RabbitToken： 机器人给你发的token
 MS_HELP_PIN：设置车头
-MS_CK_REVERSE：0：正序，1：反序，2：乱序
+MS_CK_REVERSE：1：正序，2：反序，3：乱序
 MS_MAX_HELP_NUM：每个队伍的人数
 MS_READ_FILE_CK：读取ck文件，默认false，ck文件为ZNS_ZD_ck.txt，格式为一行一个ck
 
