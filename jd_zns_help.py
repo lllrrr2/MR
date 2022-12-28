@@ -171,5 +171,6 @@ if __name__ == '__main__':
     task = TaskClass("help")
     task.MAX_HELP_NUM = 8
     task.name = 'ZNS_HELP'
+    task.need_appck = True
     task.init_config(ZnsHelpUserClass)
     task.main("炸年兽-助力")

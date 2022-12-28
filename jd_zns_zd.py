@@ -148,5 +148,6 @@ if __name__ == '__main__':
     task = TaskClass("zd")
     task.MAX_HELP_NUM = 30
     task.name = 'ZNS_ZD'
+    task.need_appck = True
     task.init_config(ZnsZDUserClass)
     task.main("炸年兽-组队")

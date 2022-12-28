@@ -277,5 +277,6 @@ if __name__ == '__main__':
     task = TaskClass("invite")
     task.MAX_HELP_NUM = 32
     task.name = 'ZNS_PZ'
+    task.need_appck = True
     task.init_config(ZnsPZUserClass)
     task.main("炸年兽-膨胀")
