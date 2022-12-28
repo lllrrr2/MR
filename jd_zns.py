@@ -342,6 +342,10 @@ class ZnsUserClass(UserClass):
                 if result.get("data") and result['data'].get('bizCode') == 0:
                     if result['data']['result'].get("successToast"):
                         self.printf(f"{result['data']['result'].get('successToast')}")
+                    elif result['data']['result'].get("score") == '0':
+                        self.printf(f"已完成({result['data']['result'].get('maxTimes')}/{result['data']['result'].get('times')})")
+                    else:
+                        self.printf(f"任务完成，获得{result['data']['result'].get('score')}金币")
                 else:
                     msg = result['data']['bizMsg']
                     if "火爆" in msg:
@@ -536,7 +540,7 @@ class ZnsUserClass(UserClass):
                         oneActivityInfo = productList[j]
                         body = {"taskId": taskId, "taskToken": oneActivityInfo['taskToken']}
                         self.promote_collectScore(body)
-                        randomWait(1, 1)
+                        randomWait(3, 2)
                         needTime -= 1
 
                 elif oneTask["taskType"] in [1, 3, 5, 7, 9, 21, 26] and oneTask['status'] == 1:
@@ -576,16 +580,18 @@ class ZnsUserClass(UserClass):
                         waitDuration = oneTask.get('waitDuration', 0)
                         body = {"taskId": oneTask['taskId'], "taskToken": oneActivityInfo['taskToken'], "actionType": 1}
                         callbackInfo = self.promote_collectScore(body)
-                        if callbackInfo['code'] == 0 and callbackInfo['data'] and callbackInfo['data'].get('result') and callbackInfo['data']['result'].get('taskToken'):
+                        print(callbackInfo)
+                        if callbackInfo.get('code') == 0 and callbackInfo['data'] and callbackInfo['data'].get('result') and callbackInfo['data']['result'].get('taskToken'):
                             self.printf(f"等待{waitDuration}s")
                             randomWait(waitDuration, 1)
                             body = {"taskId": oneTask['taskId'], "taskToken": oneActivityInfo['taskToken'],
                                     "actionType": 0}
                             self.promote_collectScore(body)
-                        elif callbackInfo['code'] == 0 and callbackInfo['data'] and callbackInfo['data'].get('result') and callbackInfo['data']['bizCode'] == 0:
+                        elif callbackInfo.get('code') == 0 and callbackInfo['data'] and callbackInfo['data'].get('result') and callbackInfo['data']['bizCode'] == 0:
                             self.printf(f"任务完成，获得{callbackInfo['data']['result']['score']}金币")
                         if self.black or times >= oneTask["maxTimes"]:
                             break
+                        randomWait(3, 2)
 
                 elif oneTask["taskType"] in [2] and oneTask['status'] == 1 and \
                         oneTask['scoreRuleVos'][0]['scoreRuleType'] == 2:
@@ -609,7 +615,7 @@ class ZnsUserClass(UserClass):
                         taskToken = productList[j]['taskToken']
                         body = {"taskId": taskId, "taskToken": taskToken}
                         self.promote_collectScore(body)
-                        randomWait(1, 1)
+                        randomWait(3, 2)
                         needTime -= 1
 
                 elif oneTask["taskType"] in [8] and oneTask['status'] == 1 and \
@@ -635,6 +641,7 @@ class ZnsUserClass(UserClass):
                             self.promote_collectScore(body)
                         if self.black or times >= oneTask["maxTimes"]:
                             break
+                        randomWait(3, 2)
 
                 elif oneTask['status'] == 3 or '去首页' in oneTask['taskName'] or '打卡' in oneTask['taskName'] or '去APP' in oneTask['taskName']:
                     self.toTaskFlag = False
@@ -645,7 +652,7 @@ class ZnsUserClass(UserClass):
                         body = {"taskId": oneTask['taskId'], "taskToken": oneActivityInfo['taskToken'],
                                 "actionType": 0}
                         self.promote_collectScore(body)
-                        randomWait(1, 1)
+                        randomWait(3, 2)
 
                 elif '品牌墙' in oneTask['taskName']:
                     self.toTaskFlag = False
@@ -656,10 +663,10 @@ class ZnsUserClass(UserClass):
                         body = {"taskId": oneTask['taskId'], "taskToken": oneActivityInfo['taskToken'],
                                 "actionType": 1}
                         self.promote_collectScore(body)
-                        randomWait(1, 2)
+                        randomWait(3, 2)
                         body = {"taskId": oneTask['taskId'], "taskToken": oneActivityInfo['taskToken']}
                         self.promote_collectScore(body)
-                        randomWait(1, 2)
+                        randomWait(3, 2)
 
             if self.black:
                 break
@@ -707,7 +714,7 @@ class ZnsUserClass(UserClass):
                 body = {"taskId": oneTask['taskId'], "taskToken": oneActivityInfo['taskToken'],
                         "actionType": 1}
                 callbackInfo = self.promote_collectScore(body)
-                if callbackInfo['code'] == 0 and callbackInfo['data'] and callbackInfo['data']['success'] and callbackInfo['data']['result'].get('taskToken'):
+                if callbackInfo.get('code') == 0 and callbackInfo['data'] and callbackInfo['data']['success'] and callbackInfo['data']['result'].get('taskToken'):
                     self.printf(f"等待{waitDuration}s")
                     randomWait(waitDuration, 1)
                     body = {"taskId": oneTask['taskId'], "taskToken": oneActivityInfo['taskToken']}
@@ -715,6 +722,7 @@ class ZnsUserClass(UserClass):
 
                 if self.black or times >= oneTask["maxTimes"]:
                     break
+                randomWait(3, 2)
         else:
             self.printf(f"任务都做完了")
 
@@ -729,7 +737,7 @@ class ZnsUserClass(UserClass):
             shareCount += 1
             if not self.black:
                 self.promote_getWelfareScore()
-            randomWait(2, 1)
+            randomWait(3, 2)
         ## 分享任务2
         if not self.black:
             self.printf(f"去做分享任务2")
@@ -741,7 +749,7 @@ class ZnsUserClass(UserClass):
             shareCount += 1
             if not self.black:
                 self.promote_getWelfareScore()
-            randomWait(2, 1)
+            randomWait(3, 2)
 
         self.promote_getHomeData()
 
@@ -765,7 +773,7 @@ class ZnsUserClass(UserClass):
                 self.scenceMap = self.raiseInfo['scenceMap']['sceneInfo']
                 sceneInfo = self.sceneInfo()
                 self.nextLevelScore = self.raiseInfo['scenceMap']['redNum']['nextLevelScore']
-                randomWait(1, 2)
+                randomWait(3, 2)
                 self.printf(
                     f"分红:{self.raiseInfo['redInfo']['red']}份金币:{self.raiseInfo['totalScore']} {self.raiseInfo['produceResult']['produceScore']}金币待领取")
             else:
