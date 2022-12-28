@@ -24,7 +24,6 @@ class ZnsHelpUserClass(UserClass):
     def __init__(self, cookie):
         super(ZnsHelpUserClass, self).__init__(cookie)
         self.inviteCode = ""
-        self.force_app_ck = True
         self.appname = "50174"
         self._help_num = None
         self._error = 0
@@ -121,6 +120,9 @@ class ZnsHelpUserClass(UserClass):
             print_trace()
 
     def help(self, inviter):
+        if "app_open" not in self.cookie:
+            self.printf("非appck，跳过")
+            return
         try:
             if inviter.help_num >= inviter.MAX_HELP_NUM:
                 inviter.need_help = False

@@ -23,7 +23,6 @@ from utils.common import UserClass, print_trace, print_api_error, printf, wait, 
 class ZnsUserClass(UserClass):
     def __init__(self, cookie):
         super(ZnsUserClass, self).__init__(cookie)
-        self.force_app_ck = True
         self.appname = "50174"
         self._help_num = None
         self.maxLevel = False
@@ -455,6 +454,9 @@ class ZnsUserClass(UserClass):
             return {}
 
     def main(self):
+        if "app_open" not in self.cookie:
+            self.printf("非appck，跳过")
+            return
         self.printf("\n开始执行！")
         self.promote_getHomeData()
         if self.black:
