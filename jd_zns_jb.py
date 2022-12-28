@@ -46,10 +46,12 @@ class ZnsUserClass(UserClass):
         _opt = {
             "method": "post",
             "log": False,
+            "api": "client.action",
             "body_param": {
                 "appid": "signed_wh5",
                 "client": "m",
-                "clientVersion": "-1"
+                "clientVersion": "-1",
+                "functionId": opt['functionId']
             }
         }
         _opt.update(opt)
@@ -115,6 +117,7 @@ class ZnsUserClass(UserClass):
                     print_api_error(opt, status)
                     self.printf(msg)
             else:
+                print(result)
                 msg = result['msg']
                 if '登陆失败' in msg:
                     self.valid = False

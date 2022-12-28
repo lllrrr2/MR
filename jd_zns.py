@@ -46,10 +46,12 @@ class ZnsUserClass(UserClass):
         _opt = {
             "method": "post",
             "log": False,
+            "api": "client.action",
             "body_param": {
                 "appid": "signed_wh5",
                 "client": "m",
                 "clientVersion": "-1",
+                "functionId": opt['functionId']
             }
         }
         _opt.update(opt)
