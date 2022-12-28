@@ -458,9 +458,6 @@ class ZnsUserClass(UserClass):
             return {}
 
     def main(self):
-        if "app_open" not in self.cookie:
-            self.printf("非appck，跳过")
-            return
         self.printf("\n开始执行！")
         self.promote_getHomeData()
         if self.black:

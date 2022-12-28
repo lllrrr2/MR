@@ -219,9 +219,6 @@ class ZnsPZUserClass(UserClass):
             print_trace()
 
     def help(self, inviter):
-        if "app_open" not in self.cookie:
-            self.printf("非appck，跳过")
-            return
         try:
             self.promote_getHomeData()
             if not self.can_help:

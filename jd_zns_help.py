@@ -120,9 +120,6 @@ class ZnsHelpUserClass(UserClass):
             print_trace()
 
     def help(self, inviter):
-        if "app_open" not in self.cookie:
-            self.printf("非appck，跳过")
-            return
         try:
             if inviter.help_num >= inviter.MAX_HELP_NUM:
                 inviter.need_help = False
