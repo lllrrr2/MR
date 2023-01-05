@@ -45,7 +45,7 @@ class ZnsUserClass(UserClass):
         _opt = {
             "method": "post",
             "log": False,
-            "api": "client.action",
+            # "api": "client.action",
             "body_param": {
                 "appid": "signed_wh5",
                 "client": "m",
@@ -343,7 +343,9 @@ class ZnsUserClass(UserClass):
                     if result['data']['result'].get("successToast"):
                         self.printf(f"{result['data']['result'].get('successToast')}")
                     elif result['data']['result'].get("score") == '0':
-                        self.printf(f"已完成({result['data']['result'].get('maxTimes')}/{result['data']['result'].get('times')})")
+                        self.printf(f"已完成({result['data']['result'].get('times')}/{result['data']['result'].get('maxTimes')})")
+                    elif result['data']['result'].get("score", None) is None:
+                        pass
                     else:
                         self.printf(f"任务完成，获得{result['data']['result'].get('score')}金币")
                 else:
@@ -521,7 +523,6 @@ class ZnsUserClass(UserClass):
             for i in range(len(self.taskList)):
                 oneTask = self.taskList[i]
                 if oneTask["taskType"] in [5] and oneTask['status'] == 1 and "种草" in oneTask['taskName']:
-                    self.toTaskFlag = False
                     self.printf(f"做任务:\t{oneTask['taskName']}")
                     taskId = oneTask['taskId']
                     feedDetailInfo = self.promote_getFeedDetail(taskId)
@@ -539,6 +540,7 @@ class ZnsUserClass(UserClass):
                         self.promote_collectScore(body)
                         randomWait(3, 2)
                         needTime -= 1
+                        self.toTaskFlag = False
 
                 elif oneTask["taskType"] in [1, 3, 5, 7, 9, 21, 26] and oneTask['status'] == 1:
                     if oneTask.get("shoppingActivityVos"):
@@ -577,7 +579,6 @@ class ZnsUserClass(UserClass):
                         waitDuration = oneTask.get('waitDuration', 0)
                         body = {"taskId": oneTask['taskId'], "taskToken": oneActivityInfo['taskToken'], "actionType": 1}
                         callbackInfo = self.promote_collectScore(body)
-                        print(callbackInfo)
                         if callbackInfo.get('code') == 0 and callbackInfo['data'] and callbackInfo['data'].get('result') and callbackInfo['data']['result'].get('taskToken'):
                             self.printf(f"等待{waitDuration}s")
                             randomWait(waitDuration, 1)
@@ -585,14 +586,14 @@ class ZnsUserClass(UserClass):
                                     "actionType": 0}
                             self.promote_collectScore(body)
                         elif callbackInfo.get('code') == 0 and callbackInfo['data'] and callbackInfo['data'].get('result') and callbackInfo['data']['bizCode'] == 0:
-                            self.printf(f"任务完成，获得{callbackInfo['data']['result']['score']}金币")
+                            # self.printf(f"任务完成，获得{callbackInfo['data']['result']['score']}金币")
+                            pass
                         if self.black or times >= oneTask["maxTimes"]:
                             break
                         randomWait(3, 2)
 
                 elif oneTask["taskType"] in [2] and oneTask['status'] == 1 and \
                         oneTask['scoreRuleVos'][0]['scoreRuleType'] == 2:
-                    self.toTaskFlag = False
                     self.printf(f"做任务2：{oneTask['taskName']}")
                     taskId = oneTask['taskId']
                     feedDetailInfo = self.promote_getFeedDetail(taskId)
@@ -614,10 +615,10 @@ class ZnsUserClass(UserClass):
                         self.promote_collectScore(body)
                         randomWait(3, 2)
                         needTime -= 1
+                        self.toTaskFlag = False
 
                 elif oneTask["taskType"] in [8] and oneTask['status'] == 1 and \
                         oneTask['scoreRuleVos'][0]['scoreRuleType'] == 2:
-                    self.toTaskFlag = False
                     activityInfoList = oneTask.get('productInfoVos', [])
                     times = oneTask.get('times', 0)
                     for j in range(len(activityInfoList)):
@@ -639,9 +640,9 @@ class ZnsUserClass(UserClass):
                         if self.black or times >= oneTask["maxTimes"]:
                             break
                         randomWait(3, 2)
+                        self.toTaskFlag = False
 
                 elif oneTask['status'] == 3 or '去首页' in oneTask['taskName'] or '打卡' in oneTask['taskName'] or '去APP' in oneTask['taskName']:
-                    self.toTaskFlag = False
                     taskId = oneTask['taskId']
                     oneActivityInfo = oneTask['simpleRecordInfoVo']
                     if taskId and oneActivityInfo:
@@ -650,9 +651,9 @@ class ZnsUserClass(UserClass):
                                 "actionType": 0}
                         self.promote_collectScore(body)
                         randomWait(3, 2)
+                        self.toTaskFlag = False
 
                 elif '品牌墙' in oneTask['taskName']:
-                    self.toTaskFlag = False
                     taskId = oneTask['taskId']
                     oneActivityInfo = oneTask['simpleRecordInfoVo']
                     if taskId and oneActivityInfo:
@@ -664,11 +665,12 @@ class ZnsUserClass(UserClass):
                         body = {"taskId": oneTask['taskId'], "taskToken": oneActivityInfo['taskToken']}
                         self.promote_collectScore(body)
                         randomWait(3, 2)
+                        self.toTaskFlag = False
 
             if self.black:
                 break
 
-            if not self.toTaskFlag and toTaskCount <= 1:
+            if not self.toTaskFlag and toTaskCount <= 100:
                 self.promote_getTaskDetail()
 
             if self.toTaskFlag:
@@ -781,5 +783,6 @@ if __name__ == '__main__':
     task = TaskClass("task")
     task.name = 'ZNS'
     task.need_appck = True
+    task.FORCE_XCX_CK = True
     task.init_config(ZnsUserClass)
     task.main("炸年兽-2023")

@@ -32,7 +32,7 @@ class ZnsPZUserClass(UserClass):
 
     def opt(self, opt):
         self.set_joyytoken()
-        self.set_shshshfpb()
+        # self.set_shshshfpb()
         _opt = {
             "method": "post",
             "log": True,
@@ -158,6 +158,35 @@ class ZnsPZUserClass(UserClass):
         except:
             print_trace()
 
+    def promote_pk_divideScores(self):
+        try:
+            body = {}
+            opt = {
+                "functionId": "promote_pk_divideScores",
+                "body": body,
+            }
+            status, result = self.jd_api(self.opt(opt))
+            if result and result.get("code") == 0:
+                if result.get("data") and result['data'].get('bizCode') == 0:
+                    self.printf(f"领取组队奖励: {result['data']['result']['produceScore']}鞭炮")
+                else:
+                    msg = result['data']['bizMsg']
+                    if "火爆" in msg:
+                        self.black = True
+                    elif "环境异常" in msg:
+                        self.black = True
+                    print_api_error(opt, status)
+                    self.printf(f"[{self.Name}]\t{msg}")
+            else:
+                msg = result['msg']
+                if '登陆失败' in msg:
+                    self.valid = False
+                    self.can_help = False
+                    self.need_help = False
+                self.printf(f"{msg}")
+        except:
+            print_trace()
+
     def promote_pk_receiveAward(self):
         try:
             body = {}
@@ -190,6 +219,7 @@ class ZnsPZUserClass(UserClass):
     def get_invite_code(self):
         self.promote_pk_getMsgPopup()
         self.promote_pk_getAmountForecast()
+        self.promote_pk_divideScores()
         try:
             body = {}
             opt = {
@@ -226,6 +256,8 @@ class ZnsPZUserClass(UserClass):
             if inviter.help_num >= inviter.MAX_HELP_NUM:
                 inviter.need_help = False
                 printf(f"车头[{inviter.Name}]\t 助力已满({inviter.help_num}/{inviter.MAX_HELP_NUM})")
+                inviter.promote_pk_getAmountForecast()
+                inviter.promote_pk_receiveAward()
                 return
             body = {
                 "inviteId": inviter.inviteCode,
@@ -275,5 +307,6 @@ if __name__ == '__main__':
     task.MAX_HELP_NUM = 32
     task.name = 'ZNS_PZ'
     task.need_appck = True
+    task.run_time = [20, 23]
     task.init_config(ZnsPZUserClass)
     task.main("炸年兽-膨胀")
