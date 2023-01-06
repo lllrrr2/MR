@@ -44,7 +44,7 @@ class ZnsHelpUserClass(UserClass):
 
     def opt(self, opt):
         self.set_joyytoken()
-        self.set_shshshfpb()
+        # self.set_shshshfpb()
         _opt = {
             "method": "post",
             "log": True,
@@ -147,7 +147,7 @@ class ZnsHelpUserClass(UserClass):
                     elif '次数用完啦' in msg:
                         self.can_help = False
                     elif '火爆' in msg:
-                        inviter.error += 1
+                        # inviter.error += 1
                         self.error += 1
                     elif '邀请过' in msg:
                         pass
@@ -165,7 +165,7 @@ class ZnsHelpUserClass(UserClass):
 
 
 if __name__ == '__main__':
-    task = TaskClass("help")
+    task = TaskClass("invite")
     task.MAX_HELP_NUM = 8
     task.name = 'ZNS_HELP'
     task.need_appck = True
