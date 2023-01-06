@@ -783,6 +783,5 @@ if __name__ == '__main__':
     task = TaskClass("task")
     task.name = 'ZNS'
     task.need_appck = True
-    task.FORCE_XCX_CK = True
     task.init_config(ZnsUserClass)
     task.main("炸年兽-2023")
