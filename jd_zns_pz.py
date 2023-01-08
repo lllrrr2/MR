@@ -20,6 +20,24 @@ import json
 from utils.common import UserClass, printf, print_api_error, print_trace, TaskClass
 
 
+def refresh_proxy_func(status, result):
+    """
+    是否切换ip
+
+    :param status: http状态码
+    :param result: 请求后的json数据
+    :return: bool
+    """
+    msg = result.get("msg", "")
+    if '环境异常' in msg:
+        return True
+    if not result.get("data"):
+        return
+    msg = result['data'].get("bizMsg", "")
+    if '环境异常' in msg:
+        return True
+
+
 class ZnsPZUserClass(UserClass):
     def __init__(self, cookie):
         super(ZnsPZUserClass, self).__init__(cookie)
@@ -40,7 +58,8 @@ class ZnsPZUserClass(UserClass):
                 "appid": "signed_wh5",
                 "client": "wh5",
                 "clientVersion": "-1"
-            }
+            },
+            "refresh_proxy_func": refresh_proxy_func
         }
         _opt.update(opt)
         return _opt
