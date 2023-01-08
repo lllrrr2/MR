@@ -31,7 +31,7 @@ class ZnsZDUserClass(UserClass):
 
     def opt(self, opt):
         self.set_joyytoken()
-        self.set_shshshfpb()
+        # self.set_shshshfpb()
         _opt = {
             "method": "post",
             "log": True,
@@ -146,5 +146,6 @@ if __name__ == '__main__':
     task.MAX_HELP_NUM = 30
     task.name = 'ZNS_ZD'
     task.need_appck = True
+    task.run_time = [8, 19]
     task.init_config(ZnsZDUserClass)
     task.main("炸年兽-组队")

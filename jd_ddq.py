@@ -42,7 +42,7 @@ class Necklace(UserClass):
 
     def opt(self, opt):
         self.set_joyytoken()
-        self.set_shshshfpb()
+        # self.set_shshshfpb()
         _opt = {
             "method": "post",
             "api": "api",
@@ -142,7 +142,7 @@ class Necklace(UserClass):
         try:
             body = {
                 'taskId': taskId,
-                'currentDate': self.lastRequestTime.replace(":", "%3A")
+                # 'currentDate': self.lastRequestTime.replace(":", "%3A")
             }
             if functionId == 'necklace_startTask':
                 log_body = {
@@ -296,25 +296,37 @@ class Necklace(UserClass):
             print_trace()
 
     def doAppTask(self, task_id, _type="3"):
-        self.getCcTaskList()
-        if _type == "4":
-            body = f'&appid=XPMSGC2019&monitorSource=&uuid={self.uuid}&body={"platformType":"1","taskId":"necklace_{task_id}"}&client=m&clientVersion=4.6.0&area=16_1315_1316_59175&geo=[object Object]'
-            functionId = 'reportSinkTask'
-            printf("需等待30秒")
-            randomWait(30, 1)
-            self.getCcTaskList(functionId, body, _type)
-        elif _type == "3":
-            body = {
-                "to": 'https://m.jd.com',
-                "action": "to"
-            }
-            sign = get_sign("genToken", json.dumps(body))
-            opt = {
-                "functionId": "reportCcTask",
-                "body": body
-            }
-            # body =
-            pass
+        try:
+            self.getCcTaskList()
+            if _type == "4":
+                body = f'&appid=XPMSGC2019&monitorSource=&uuid={self.uuid}&body={"platformType":"1","taskId":"necklace_{task_id}"}&client=m&clientVersion=4.6.0&area=16_1315_1316_59175&geo=[object Object]'
+                functionId = 'reportSinkTask'
+                printf("需等待30秒")
+                randomWait(30, 1)
+                self.getCcTaskList(functionId, body, _type)
+            elif _type == "3":
+                body = {
+                    "monitorRefer": "",
+                    "monitorSource": "ccgroup_android_index_task",
+                    "taskId": f"necklace_{task_id}",
+                    "taskType": "2"
+                }
+                opt = {
+                    "functionId": "reportCcTask",
+                    "body": body,
+                    "sign": True,
+                    'params': {}
+                }
+                printf("需等待15秒")
+                randomWait(15, 1)
+                status, res_data = self.jd_api(self.opt(opt))
+                if res_data:
+                    printf(str(res_data))
+                else:
+                    printf(json.dumps(res_data))
+                    print_api_error(opt, status)
+        except:
+            print_trace()
 
     def reportTask(self, item):
         # 普通任务
@@ -375,8 +387,8 @@ class Necklace(UserClass):
 
         # if item['taskType'] == 4:
         #     self.doAppTask('4', item['id'])
-        # if item['taskType'] == 3:
-        #     self.doAppTask('3', item['id'])
+        if item['taskType'] == 3:
+            self.doAppTask(item['id'], '3')
 
     def doTask(self):
         for item in self.taskConfigVos:

@@ -41,7 +41,7 @@ class ZnsUserClass(UserClass):
 
     def opt(self, opt):
         self.set_joyytoken()
-        self.set_shshshfpb()
+        # self.set_shshshfpb()
         _opt = {
             "method": "post",
             "log": False,
