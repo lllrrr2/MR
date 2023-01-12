@@ -480,7 +480,10 @@ class ZnsUserClass(UserClass):
                     pass
                     # self.printf(f"{i['name']}\t未解锁")
             else:
-                self.printf(f"离分红还差: \t{str(self.raiseInfo['scenceMap']['redNum']['nextNum'])}")
+                if self.raiseInfo['scenceMap']['redNum'].get('nextNum'):
+                    self.printf(f"离分红还差: \t{str(self.raiseInfo['scenceMap']['redNum']['nextNum'])}")
+                else:
+                    self.printf("红包已满")
             self.promote_collectAutoScore()
         self.promote_getSignHomeData()
         signNum = 0
