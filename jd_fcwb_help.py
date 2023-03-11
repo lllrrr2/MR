@@ -15,6 +15,8 @@ FCWB_HELP_READ_FILE_CK：读取ck文件，默认false，ck文件为ZNS_ZD_ck.txt
 
 log剩余次数大于5000方可使用
 '''
+import asyncio
+import json
 
 from utils.common import UserClass, printf, print_api_error, print_trace, TaskClass
 
@@ -33,16 +35,16 @@ class FcwbUserClass(UserClass):
         self.Origin = "https://bnzf.jd.com"
         self.referer = "https://bnzf.jd.com/?activityId=pTTvJeSTrpthgk9ASBVGsw&inviterId=&inviterCode=&utm_user=plusmember&ad_od=share&utm_source=androidapp&utm_medium=appshare&utm_campaign=t_335139774&utm_term=Wxfriends&lng=106.477132&lat=29.502772&sid=84c83c76030880654e4e98b6bcda688w&un_area=4_50952_106_0"
 
-    def init(self):
-        self.ua = self.default_jsb_ua
-        headers = {
-            "Cookie": self.cookie,
-            "User-Agent": self.ua,
-            'Content-Type': "application/x-www-form-urlencoded; charset=UTF-8",
-            "Origin": "https://bnzf.jd.com",
-            "referer": "https://bnzf.jd.com/?activityId=pTTvJeSTrpthgk9ASBVGsw&inviterId=&inviterCode=&utm_user=plusmember&ad_od=share&utm_source=androidapp&utm_medium=appshare&utm_campaign=t_335139774&utm_term=Wxfriends&lng=106.477132&lat=29.502772&sid=84c83c76030880654e4e98b6bcda688w&un_area=4_50952_106_0"
-        }
-        self.headers = headers
+    # def init(self):
+    #     self.ua = self.default_jsb_ua
+    #     headers = {
+    #         "Cookie": self.cookie,
+    #         "User-Agent": self.ua,
+    #         'Content-Type': "application/x-www-form-urlencoded; charset=UTF-8",
+    #         "Origin": "https://bnzf.jd.com",
+    #         "referer": "https://bnzf.jd.com/?activityId=pTTvJeSTrpthgk9ASBVGsw&inviterId=&inviterCode=&utm_user=plusmember&ad_od=share&utm_source=androidapp&utm_medium=appshare&utm_campaign=t_335139774&utm_term=Wxfriends&lng=106.477132&lat=29.502772&sid=84c83c76030880654e4e98b6bcda688w&un_area=4_50952_106_0"
+    #     }
+    #     self.headers = headers
 
     def opt(self, opt):
         _opt = {
@@ -55,7 +57,16 @@ class FcwbUserClass(UserClass):
         _opt.update(opt)
         return _opt
 
-    def home(self):
+    def searchParams(self, searchParams):
+        _searchParams = {
+            "client": "iOS",
+            "clientVersion": "3.9.0",
+            "appid": "activities_platform",
+        }
+        _searchParams.update(searchParams)
+        return _searchParams
+
+    async def home(self):
         body = {
             "linkId": linkId
         }
@@ -63,8 +74,12 @@ class FcwbUserClass(UserClass):
             "functionId": "happyDigHome",
             "body": body,
             "appId": "ce6c2",
+            "searchParams": self.searchParams({
+                "functionId": "happyDigHome",
+                "body": json.dumps(body, separators=(",", ":"))
+            })
         }
-        status, res_data = self.jd_api(self.opt(opt))
+        status, res_data = await self.jd_api(self.opt(opt))
         if res_data.get('code') == 0:
             pass
         else:
@@ -74,7 +89,12 @@ class FcwbUserClass(UserClass):
 
     @property
     def help_num(self):
-        if self._help_num == None:
+        if self._help_num is None:
+            self._help_num = 0
+        return self._help_num
+
+    async def happyDigHelpList(self):
+        try:
             body = {
                 "pageNum": 1,
                 "pageSize": 50,
@@ -84,26 +104,29 @@ class FcwbUserClass(UserClass):
                 "functionId": "happyDigHelpList",
                 "body": body,
                 "appId": "ce6c2",
+                "searchParams": self.searchParams({
+                    "functionId": "happyDigHelpList",
+                    "body": json.dumps(body, separators=(",", ":"))
+                })
             }
-            status, data = self.jd_api(self.opt(opt))
+            status, data = await self.jd_api(self.opt(opt))
             if status == 200:
                 if data["success"]:
                     pass
                     self._help_num = data['data'].get('personNum', 0)
                 else:
-                    self._help_num = 0
                     self.black = True
             else:
-                self._help_num = 0
                 print_api_error(opt, status)
                 self.black = True
-        return self._help_num
+        except:
+            print_trace()
 
     @help_num.setter
     def help_num(self, value):
         self._help_num = value
 
-    def get_invite_code(self):
+    async def get_invite_code(self):
         body = {
             "linkId": linkId
         }
@@ -111,8 +134,12 @@ class FcwbUserClass(UserClass):
             "functionId": "happyDigHome",
             "body": body,
             "appId": "ce6c2",
+            "searchParams": self.searchParams({
+                "functionId": "happyDigHome",
+                "body": json.dumps(body, separators=(",", ":"))
+            })
         }
-        status, res_data = self.jd_api(self.opt(opt))
+        status, res_data = await self.jd_api(self.opt(opt))
         if res_data.get('success'):
             self.curRound = res_data['data']['curRound']
             self.inviteCode = res_data['data']['inviteCode']
@@ -121,14 +148,15 @@ class FcwbUserClass(UserClass):
             printf(f"[{self.Name}]【助力码】:\t{res_data['data']['inviteCode']}")
         else:
             self.black = True
+        await self.happyDigHelpList()
 
-    def help(self, inviter):
+    async def help(self, inviter):
         try:
             if inviter.help_num >= inviter.MAX_HELP_NUM:
                 inviter.need_help = False
                 printf(f"车头[{inviter.Name}]\t 助力已满({inviter.help_num}/{inviter.MAX_HELP_NUM})")
                 return
-            self.home()
+            await self.home()
             body = {
                 "inviter": inviter.inviter,
                 "inviteCode": inviter.inviteCode,
@@ -138,13 +166,17 @@ class FcwbUserClass(UserClass):
                 "functionId": "happyDigHelp",
                 "body": body,
                 "appId": "8dd95",
+                "searchParams": self.searchParams({
+                    "functionId": "happyDigHelp",
+                    "body": json.dumps(body, separators=(",", ":"))
+                })
             }
-            status, res_data = self.jd_api(self.opt(opt))
+            status, res_data = await self.jd_api(self.opt(opt))
             code = str(res_data.get('code', status))
             if code == '0':
                 inviter.help_num += 1
                 self.can_help = False
-                printf(f"\t助力[{inviter.Name}]成功, 已邀请: {inviter.help_num}/{inviter.MAX_HELP_NUM}")
+                self.printf_help(f"\t助力[{inviter.Name}]成功", inviter)
             else:
                 msg = res_data.get("errMsg", "")
                 if '未登录' in msg:
@@ -153,14 +185,14 @@ class FcwbUserClass(UserClass):
                 elif '上限' in msg or '火爆' in msg or '邀请过' in msg:
                     self.can_help = False
                     self.black = True
-                printf(f"\t助力失败[{code}]: {msg}")
+                self.printf_help(f"\t助力失败[{code}]: {msg}", inviter)
         except:
             print_trace()
 
 
 if __name__ == '__main__':
     task = TaskClass("invite")
-    task.MAX_HELP_NUM = 60
+    task.MAX_HELP_NUM = 40
     task.name = 'FCWB_HELP'
     task.init_config(FcwbUserClass)
-    task.main("发财挖宝-助力")
+    asyncio.run(task.main("发财挖宝-助力"))

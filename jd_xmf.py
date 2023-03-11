@@ -11,10 +11,11 @@ RabbitToken： 机器人给你发的token
 XMF_HELP_PIN：设置车头
 XMF_CK_REVERSE：1：正序，2：反序，3：乱序
 XMF_MAX_HELP_NUM：每个队伍的人数
-XMF_READ_FILE_CK：读取ck文件，默认false，ck文件为ZNS_ZD_ck.txt，格式为一行一个ck
+XMF_READ_FILE_CK：读取ck文件，默认false，ck文件为XMF_ck.txt或ck.txt，格式为一行一个ck
 
 log剩余次数大于5000方可使用
 '''
+import asyncio
 import json
 import os
 from urllib.parse import quote
@@ -36,14 +37,15 @@ class XMFUserClass(UserClass):
         self.ProjectPoolId = ''
         self.giftProjectId = ''
         self.giftProjectPoolId = ''
+        self.force_app_ck = True
         self.risk = False
         self.mofang_exchage = True
         self.Origin = "https://h5.m.jd.com"
         self.referer = "https://h5.m.jd.com/pb/010631430/2bf3XEEyWG11pQzPGkKpKX2GxJz2/index.html"
 
-    def opt(self, opt):
-        self.set_joyytoken()
-        self.set_shshshfpb()
+    async def opt(self, opt):
+        await self.set_joyytoken()
+        # self.set_shshshfpb()
         _opt = {
             "method": "post",
             "api": "client.action",
@@ -68,14 +70,14 @@ class XMFUserClass(UserClass):
         body.update({"extParam": extParam})
         return f"body={quote(json.dumps(body, separators=(',', ':')))}"
 
-    def getInteractionHomeInfo(self):
+    async def getInteractionHomeInfo(self):
         body = {"sign": "u6vtLQ7ztxgykLEr"}
         opt = {
             "functionId": "getInteractionHomeInfo",
             "body": body,
             "log": True
         }
-        status, res_data = self.jd_api(self.opt(opt))
+        status, res_data = await self.jd_api(await self.opt(opt))
         if res_data:
             if res_data['result'].get('giftConfig'):
                 self.projectId = res_data['result']['taskConfig']['projectId']
@@ -83,11 +85,11 @@ class XMFUserClass(UserClass):
                 self.giftProjectId = res_data['result']['giftConfig']['projectId']
                 self.giftProjectPoolId = res_data['result']['giftConfig']['projectPoolId']
             else:
-                printf("获取projectId失败")
+                self.printf("获取projectId失败")
         else:
             print_api_error(opt, status)
 
-    def queryInteractiveInfo(self, reward=False, ext={}):
+    async def queryInteractiveInfo(self, reward=False, ext={}):
         try:
             body = {"encryptProjectId": self.projectId, "sourceCode": "acexinpin0823", "ext": ext}
             if reward:
@@ -101,7 +103,7 @@ class XMFUserClass(UserClass):
                 "body": body,
                 'log': True
             }
-            status, res_data = self.jd_api(self.opt(opt))
+            status, res_data = await self.jd_api(await self.opt(opt))
             # data = json.loads(res.data.decode())
             if res_data:
                 return res_data['assignmentList']
@@ -112,7 +114,7 @@ class XMFUserClass(UserClass):
             print_trace()
             return []
 
-    def doInteractiveAssignment(self, encryptAssignmentId, itemId, actionType=None, ext={}, reward=False,
+    async def doInteractiveAssignment(self, encryptAssignmentId, itemId, actionType=None, ext={}, reward=False,
                                 completionFlag=""):
         try:
             body = {
@@ -131,23 +133,23 @@ class XMFUserClass(UserClass):
                 "body": body,
                 "log": True
             }
-            status, res_data = self.jd_api(self.opt(opt))
+            status, res_data = await self.jd_api(await self.opt(opt))
             if res_data:
-                if reward:
+                if reward and res_data.get("subCode"):
                     if res_data.get("subCode") == "0":
                         if not res_data["rewardsInfo"]["successRewards"].get("3"):
-                            printf(f"[{self.Name}]\t兑换成功")
+                            self.printf(f"兑换成功")
                         else:
                             prize = res_data["rewardsInfo"]["successRewards"]["3"][0]["rewardName"]
-                            printf(f"[{self.Name}]\t恭喜你抽中：" + prize)
+                            self.printf(f"恭喜你抽中：" + prize)
                     elif res_data.get("subCode") == "103":
-                        printf(f"[{self.Name}]\t已经兑换过了")
+                        self.printf(f"已经兑换过了")
                     elif res_data.get("subCode") == "1703":
-                        printf(f"[{self.Name}]\t{res_data['msg']}")
+                        self.printf(f"{res_data['msg']}")
                     else:
                         print_api_error(opt, status)
                 else:
-                    printf(f"[{self.Name}]\t{res_data['msg']}")
+                    self.printf(f"{res_data['msg']}")
                 if res_data['msg'] == "兑换积分不足":
                     self.mofang_exchage = False
                 if res_data['msg'] == "未登录":
@@ -164,117 +166,124 @@ class XMFUserClass(UserClass):
         except:
             print_trace()
 
-    def main(self):
-        self.getInteractionHomeInfo()
+    async def main(self):
+        printf(f"----------【账号{self.index}】{self.Name}----------")
+        await self.getInteractionHomeInfo()
         if not self.projectId:
             return
-        taskList = self.queryInteractiveInfo()
+        taskList = await self.queryInteractiveInfo()
         if taskList:
             for vo in taskList:
                 if vo.get("ext") and vo['ext'].get('extraType') != 'brandMemberList' and vo['ext'].get(
                         'extraType') != 'assistTaskDetail':
                     if vo['completionCnt'] < vo['assignmentTimesLimit']:
-                        printf(
-                            f"[{self.Name}]任务：{vo['assignmentName']}，进度：{vo['completionCnt']}/{vo['assignmentTimesLimit']}，去完成")
+                        self.printf(
+                            f"任务：{vo['assignmentName']}，进度：{vo['completionCnt']}/{vo['assignmentTimesLimit']}，去完成")
                         if self.risk:
-                            printf(f"[{self.Name}]\t黑号了，跳过该账号")
+                            self.printf(f"黑号了，跳过该账号")
                             return
                         if vo['ext']:
                             if vo['ext']['extraType'] == 'sign1':
-                                self.doInteractiveAssignment(vo['encryptAssignmentId'],
+                                await self.doInteractiveAssignment(vo['encryptAssignmentId'],
                                                              vo['ext']['sign1']['itemId'])
 
                         for vi in vo['ext'].get('productsInfo', []):
                             if self.risk:
-                                printf(f"[{self.Name}]\t黑号了，跳过该账号")
+                                self.printf(f"黑号了，跳过该账号")
                                 return
                             if vi['status'] == 1 and vo['completionCnt'] < vo['assignmentTimesLimit']:
-                                self.doInteractiveAssignment(vo['encryptAssignmentId'], vi['itemId'], 1)
+                                await self.doInteractiveAssignment(vo['encryptAssignmentId'], vi['itemId'], 1)
                                 vo['completionCnt'] += 1
-                                randomWait(1, 3)
+                                await randomWait(3, 3)
 
                         for vi in vo['ext'].get('shoppingActivity', []):
                             if self.risk:
-                                printf(f"[{self.Name}]\t黑号了，跳过该账号")
+                                self.printf(f"黑号了，跳过该账号")
                                 return
                             if vi['status'] == 1 and vo['completionCnt'] < vo['assignmentTimesLimit']:
-                                self.doInteractiveAssignment(vo['encryptAssignmentId'], vi['advId'], 1)
-                                randomWait(vo['ext']['waitDuration'], 1)
+                                await self.doInteractiveAssignment(vo['encryptAssignmentId'], vi['advId'], 1)
+                                await randomWait(vo['ext']['waitDuration'], 1)
                                 if vo['ext']['waitDuration']:
-                                    self.doInteractiveAssignment(vo['encryptAssignmentId'], vi['advId'], 0)
+                                    await self.doInteractiveAssignment(vo['encryptAssignmentId'], vi['advId'], 0)
                                 vo['completionCnt'] += 1
 
                         for vi in vo['ext'].get('browseShop', []):
                             if self.risk:
-                                printf(f"[{self.Name}]\t黑号了，跳过该账号")
+                                self.printf(f"黑号了，跳过该账号")
                                 return
                             if vi['status'] == 1 and vo['completionCnt'] < vo['assignmentTimesLimit']:
-                                self.doInteractiveAssignment(vo['encryptAssignmentId'], vi['itemId'], 1)
-                                randomWait(vo['ext']['waitDuration'], 1)
+                                await self.doInteractiveAssignment(vo['encryptAssignmentId'], vi['itemId'], 1)
+                                await randomWait(vo['ext']['waitDuration'], 1)
                                 if vo['ext']['waitDuration']:
-                                    self.doInteractiveAssignment(vo['encryptAssignmentId'], vi['itemId'], 0)
+                                    await self.doInteractiveAssignment(vo['encryptAssignmentId'], vi['itemId'], 0)
                                 vo['completionCnt'] += 1
 
                         for vi in vo['ext'].get('addCart', []):
                             if self.risk:
-                                printf(f"[{self.Name}]\t黑号了，跳过该账号")
+                                self.printf(f"黑号了，跳过该账号")
                                 return
                             if vi['status'] == 1 and vo['completionCnt'] < vo['assignmentTimesLimit']:
-                                self.doInteractiveAssignment(vo['encryptAssignmentId'], vi['itemId'], 1)
-                                randomWait(1, 1)
+                                await self.doInteractiveAssignment(vo['encryptAssignmentId'], vi['itemId'], 1)
+                                await randomWait(3, 3)
                                 vo['completionCnt'] += 1
-                        randomWait(2, 1)
+                        await randomWait(3, 3)
                     else:
-                        printf(
-                            f"[{self.Name}]任务：{vo['assignmentName']}，进度：{vo['completionCnt']}/{vo['assignmentTimesLimit']}，已完成")
+                        self.printf(
+                            f"任务：{vo['assignmentName']}，进度：{vo['completionCnt']}/{vo['assignmentTimesLimit']}，已完成")
                 elif vo.get("ext") and vo['ext'].get('extraType') == 'brandMemberList':
                     pass
                 else:
+                    pass
                     if vo['completionCnt'] < vo['assignmentTimesLimit']:
-                        printf(
-                            f"[{self.Name}]任务：{vo['assignmentName']}，进度：{vo['completionCnt']}/{vo['assignmentTimesLimit']}，去完成")
+                        self.printf(
+                            f"任务：{vo['assignmentName']}，进度：{vo['completionCnt']}/{vo['assignmentTimesLimit']}，去完成")
                         for i in range(vo['assignmentTimesLimit']):
-                            randomWait(2, 1)
+                            await randomWait(3, 3)
                             if vo['completionCnt'] < vo['assignmentTimesLimit']:
-                                self.doInteractiveAssignment(vo['encryptAssignmentId'], itemId=None, completionFlag=True)
+                                await self.doInteractiveAssignment(vo['encryptAssignmentId'], itemId=None, completionFlag=True)
                                 vo['completionCnt'] += 1
                     else:
-                        printf(
-                            f"[{self.Name}]任务：{vo['assignmentName']}，进度：{vo['completionCnt']}/{vo['assignmentTimesLimit']}，已完成")
+                        self.printf(
+                            f"任务：{vo['assignmentName']}，进度：{vo['completionCnt']}/{vo['assignmentTimesLimit']}，已完成")
             else:
-                printf(f"[{self.Name}]\t任务：做任务结束")
+                self.printf(f"任务：做任务结束")
         else:
-            printf(f'[{self.Name}]\t没有获取到活动信息')
-
-        printf(f"\n[{self.Name}]\t开始魔方兑换")
-        res = self.queryInteractiveInfo(True)
+            self.printf(f'没有获取到活动信息')
+        self.printf(f"--------->开始魔方兑换")
+        res = await self.queryInteractiveInfo(True)
         for item in res:
             if self.risk:
                 break
-            randomWait(2, 1)
             if item["assignmentName"] == '魔方':
                 i = -1
                 while not self.risk and self.mofang_exchage:
-                    randomWait(2, 1)
+                    await wait(8)
                     i += 1
-                    self.doInteractiveAssignment(item['encryptAssignmentId'], "", "", {"exchangeNum": 1},
+                    await self.doInteractiveAssignment(item['encryptAssignmentId'], "", "", {"exchangeNum": 1},
                                                  reward=True)
-                printf(f"[{self.Name}]成功兑换魔方数量:\t{i}")
+                self.printf(f"成功兑换魔方数量:\t{i}")
                 continue
+            await randomWait(3, 3)
             prize = [prize_item["rewardName"] for prize_item in item['rewards']]
-            printf(f"奖品：{'/'.join(prize)}:\t去兑换")
+            for prize_msg in prize:
+                if "京豆" not in prize_msg:
+                    prize = []
+            if not prize:
+                self.printf(f"奖品：{'/'.join(prize)}:\t不兑换")
+                break
+            self.printf(f"奖品：{'/'.join(prize)}:\t去兑换")
             if XmfRewardList == ['']:
-                self.doInteractiveAssignment(item["encryptAssignmentId"], itemId='', ext={"exchangeNum": 1}, reward=True)
+                await self.doInteractiveAssignment(item["encryptAssignmentId"], itemId='', ext={"exchangeNum": 1}, reward=True)
             else:
                 if str(item["exchangeRate"]) in XmfRewardList:
-                    self.doInteractiveAssignment(item["encryptAssignmentId"], itemId='', ext={"exchangeNum": 1}, reward=True)
+                    await self.doInteractiveAssignment(item["encryptAssignmentId"], itemId='', ext={"exchangeNum": 1}, reward=True)
                 else:
-                    printf(f"设置的不兑换")
-        printf("\n\n")
+                    self.printf(f"设置的不兑换")
+        printf("\n")
 
 
 if __name__ == '__main__':
     task = TaskClass("task")
     task.name = 'XMF'
     task.init_config(XMFUserClass)
-    task.main("小魔方-任务")
+    asyncio.run(task.main("小魔方-任务"))

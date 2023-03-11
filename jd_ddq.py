@@ -15,12 +15,12 @@ DDQ_READ_FILE_CK：读取ck文件，默认false，ck文件为ZNS_ZD_ck.txt，格
 
 log剩余次数大于5000方可使用
 '''
-
+import asyncio
 import json
 import time
 from urllib.parse import quote
 
-from utils.common import UserClass, printf, print_api_error, print_trace, wait, randomWait, get_sign, TaskClass
+from utils.common import UserClass, printf, print_api_error, print_trace, wait, randomWait, TaskClass
 
 
 class Necklace(UserClass):
@@ -40,8 +40,8 @@ class Necklace(UserClass):
         self.giftConfigId = ''
         self.taskItems = []
 
-    def opt(self, opt):
-        self.set_joyytoken()
+    async def opt(self, opt):
+        await self.set_joyytoken()
         # self.set_shshshfpb()
         _opt = {
             "method": "post",
@@ -69,13 +69,11 @@ class Necklace(UserClass):
         body = f"body={quote(json.dumps(body, separators=(',', ':')))}"
         return body
 
-    def necklace_homePage(self):
+    async def necklace_homePage(self):
         if self.risk:
             return
         try:
-            body = {
-
-            }
+            body = {}
             log_body = {
                 "action": "",
                 "log_id": "",
@@ -86,7 +84,7 @@ class Necklace(UserClass):
                 "log_body": log_body,
                 "log": True
             }
-            status, data = self.jd_api(self.opt(opt))
+            status, data = await self.jd_api(await self.opt(opt))
             if data['rtn_code'] == 0:
                 if data['data']['biz_code'] == 0:
                     result = data['data']['result']
@@ -101,7 +99,7 @@ class Necklace(UserClass):
         except Exception as e:
             printf(e)
 
-    def necklace_chargeScores(self, bubleId):
+    async def necklace_chargeScores(self, bubleId):
         try:
             body = {
                 "bubleId": bubleId
@@ -116,7 +114,7 @@ class Necklace(UserClass):
                 "log_body": log_body,
                 "log": True
             }
-            status, data = self.jd_api(self.opt(opt))
+            status, data = await self.jd_api(await self.opt(opt))
             if data['rtn_code'] == 0:
                 if data["data"]['biz_code'] == 0:
                     printf(f"[{self.Name}]\t领取奖励成功")
@@ -129,16 +127,16 @@ class Necklace(UserClass):
         except:
             print_trace()
 
-    def receiveBubbles(self):
+    async def receiveBubbles(self):
         if self.risk:
             return
         for item in self.bubbles:
             printf(f"[{self.Name}]\t开始领取 [{item['bubbleName']}] 点点券")
-            self.necklace_chargeScores(item['id'])
-            randomWait(1, 2)
+            await self.necklace_chargeScores(item['id'])
+            await randomWait(1, 2)
         pass
 
-    def necklace_startTask(self, taskId, functionId='necklace_startTask', itemId=""):
+    async def necklace_startTask(self, taskId, functionId='necklace_startTask', itemId=""):
         try:
             body = {
                 'taskId': taskId,
@@ -162,7 +160,7 @@ class Necklace(UserClass):
                     "functionId": functionId,
                     "body": body,
                 }
-            status, res_data = self.jd_api(self.opt(opt))
+            status, res_data = await self.jd_api(await self.opt(opt))
             if res_data.get("rtn_code") == 0:
                 if res_data.get('rtn_msg') == "未登录":
                     self.risk = False
@@ -183,13 +181,13 @@ class Necklace(UserClass):
             print_trace()
             return {}
 
-    def necklace_TaskApi(self, functionId, body={}):
+    async def necklace_TaskApi(self, functionId, body={}):
         try:
             opt = {
                 "functionId": functionId,
                 "body": body,
             }
-            status, res_data = self.jd_api(self.opt(opt))
+            status, res_data = await self.jd_api(await self.opt(opt))
             print(res_data)
             if res_data:
                 pass
@@ -198,7 +196,7 @@ class Necklace(UserClass):
         except:
             print_trace()
 
-    def necklace_getTask(self, taskId):
+    async def necklace_getTask(self, taskId):
         try:
             body = {
                 'taskId': taskId,
@@ -208,7 +206,7 @@ class Necklace(UserClass):
                 "functionId": "necklace_getTask",
                 "body": body,
             }
-            status, res_data = self.jd_api(self.opt(opt))
+            status, res_data = await self.jd_api(await self.opt(opt))
             if res_data:
                 if res_data['rtn_code'] == 0:
                     if res_data['data']['biz_code'] == 0 and res_data['data'].get("result"):
@@ -222,7 +220,7 @@ class Necklace(UserClass):
         except:
             print_trace()
 
-    def postRequest(self, function_id, body={}):
+    async def postRequest(self, function_id, body={}):
         try:
             opt = {
                 "functionId": function_id,
@@ -236,7 +234,7 @@ class Necklace(UserClass):
             }
             self.Origin = "https://carry.m.jd.com"
             self.referer = "https://carry.m.jd.com"
-            status, res_data = self.jd_api(self.opt(opt))
+            status, res_data = await self.jd_api(await self.opt(opt))
             if res_data:
                 pass
             else:
@@ -248,7 +246,7 @@ class Necklace(UserClass):
         self.Origin = "https://h5.m.jd.com"
         self.referer = "https://h5.m.jd.com/"
 
-    def getCcTaskList(self):
+    async def getCcTaskList(self):
         try:
             opt = {
                 "functionId": "getCcTaskList",
@@ -261,7 +259,7 @@ class Necklace(UserClass):
                 "params": {},
                 "sign": True
             }
-            status, res_data = self.jd_api(self.opt(opt))
+            status, res_data = await self.jd_api(await self.opt(opt))
             if res_data:
                 pass
             else:
@@ -276,7 +274,7 @@ class Necklace(UserClass):
         except:
             print_trace()
 
-    def reportSinkTask(self, task_id):
+    async def reportSinkTask(self, task_id):
         try:
             opt = {
                 "functionId": "reportSinkTask",
@@ -286,7 +284,7 @@ class Necklace(UserClass):
                 },
                 "sign": True
             }
-            status, res_data = self.jd_api(self.opt(opt))
+            status, res_data = await self.jd_api(await self.opt(opt))
             if res_data:
                 pass
             else:
@@ -295,15 +293,15 @@ class Necklace(UserClass):
         except:
             print_trace()
 
-    def doAppTask(self, task_id, _type="3"):
+    async def doAppTask(self, task_id, _type="3"):
         try:
-            self.getCcTaskList()
+            await self.getCcTaskList()
             if _type == "4":
                 body = f'&appid=XPMSGC2019&monitorSource=&uuid={self.uuid}&body={"platformType":"1","taskId":"necklace_{task_id}"}&client=m&clientVersion=4.6.0&area=16_1315_1316_59175&geo=[object Object]'
                 functionId = 'reportSinkTask'
                 printf("需等待30秒")
-                randomWait(30, 1)
-                self.getCcTaskList(functionId, body, _type)
+                await randomWait(30, 1)
+                await self.getCcTaskList()
             elif _type == "3":
                 body = {
                     "monitorRefer": "",
@@ -318,8 +316,8 @@ class Necklace(UserClass):
                     'params': {}
                 }
                 printf("需等待15秒")
-                randomWait(15, 1)
-                status, res_data = self.jd_api(self.opt(opt))
+                await randomWait(15, 1)
+                status, res_data = await self.jd_api(await self.opt(opt))
                 if res_data:
                     printf(str(res_data))
                 else:
@@ -328,38 +326,38 @@ class Necklace(UserClass):
         except:
             print_trace()
 
-    def reportTask(self, item):
+    async def reportTask(self, item):
         # 普通任务
         if item['taskType'] == 2:
             if item.get('requireBrowseSeconds', 0):
-                self.necklace_TaskApi('necklace_timedTask', {"taskId": item['id'], "itemId": ""})
+                await self.necklace_TaskApi('necklace_timedTask', {"taskId": item['id'], "itemId": ""})
                 printf(f"[{self.Name}]\t等待{item['requireBrowseSeconds']}s")
-                wait(item['requireBrowseSeconds'])
-            self.necklace_startTask(item['id'], 'necklace_reportTask')
+                await wait(item['requireBrowseSeconds'])
+            await self.necklace_startTask(item['id'], 'necklace_reportTask')
         # 逛很多商品店铺等等任务
         if item['taskType'] == 6 or item['taskType'] == 5 or item['taskType'] == 9:
-            self.necklace_getTask(item['id'])
+            await self.necklace_getTask(item['id'])
             for vo in self.taskItems:
                 if vo and vo["status"] != 0:
                     continue
                 printf(f"[{self.Name}]\t浏览精选活动 【{vo['title']}】")
                 if item.get('requireBrowseSeconds', 0):
-                    self.necklace_TaskApi('necklace_timedTask', {"taskId": item['id'], "itemId": vo.get('id', "")})
+                    await self.necklace_TaskApi('necklace_timedTask', {"taskId": item['id'], "itemId": vo.get('id', "")})
                     printf(f"[{self.Name}]\t等待{item['requireBrowseSeconds']}s")
-                    wait(item['requireBrowseSeconds'])
-                self.necklace_startTask(item['id'], 'necklace_reportTask', vo['id'])
-                randomWait(1, 2)
+                    await wait(item['requireBrowseSeconds'])
+                await self.necklace_startTask(item['id'], 'necklace_reportTask', vo['id'])
+                await randomWait(1, 2)
         # 关注精选频道
         if item['taskType'] == 7:
-            self.necklace_getTask(item['id'])
+            await self.necklace_getTask(item['id'])
             for vo in self.taskItems:
                 printf(f"[{self.Name}]\t关注精选频道 【{vo['title']}】")
                 if vo['status'] == 2:
                     printf(f"[{self.Name}]\t任务已完成！")
                     continue
-                self.necklace_TaskApi('necklace_doTask', {"taskId": item['id'], "itemId": vo['id']})
-                self.necklace_startTask(item['id'], 'necklace_reportTask', vo['id'])
-                self.postRequest('isUserFollow',
+                await self.necklace_TaskApi('necklace_doTask', {"taskId": item['id'], "itemId": vo['id']})
+                await self.necklace_startTask(item['id'], 'necklace_reportTask', vo['id'])
+                await self.postRequest('isUserFollow',
                                  {
                                      "themeId": vo['id'],
                                      "informationParam": {
@@ -368,62 +366,65 @@ class Necklace(UserClass):
                                          "shshshfp": "-1", "userAgent": "-1", "referUrl": "-1", "shshshfpa": "-1"},
                                      "businessId": "1"}
                                  )
-                randomWait(1, 2)
+                await randomWait(1, 2)
 
         # 关注浏览10s
         if item['taskType'] == 8:
-            self.necklace_getTask(item['id'])
+            await self.necklace_getTask(item['id'])
             for vo in self.taskItems:
                 if vo and vo["status"] != 0:
                     continue
                 printf(f"[{self.Name}]\t关注浏览10s 【{vo['title']}】")
-                self.necklace_TaskApi('necklace_doTask', {"taskId": item['id'], "itemId": vo['id']})
+                await self.necklace_TaskApi('necklace_doTask', {"taskId": item['id'], "itemId": vo['id']})
                 if item.get('requireBrowseSeconds', 0):
-                    self.necklace_TaskApi('necklace_timedTask', {"taskId": item['id'], "itemId": vo.get('id', "")})
+                    await self.necklace_TaskApi('necklace_timedTask', {"taskId": item['id'], "itemId": vo.get('id', "")})
                     printf(f"[{self.Name}]\t等待{item['requireBrowseSeconds']}s")
-                    wait(item['requireBrowseSeconds'])
-                self.necklace_startTask(item['id'], 'necklace_reportTask', vo['id'])
-                randomWait(1, 2)
+                    await wait(item['requireBrowseSeconds'])
+                await self.necklace_startTask(item['id'], 'necklace_reportTask', vo['id'])
+                await randomWait(1, 2)
 
         # if item['taskType'] == 4:
         #     self.doAppTask('4', item['id'])
         if item['taskType'] == 3:
-            self.doAppTask(item['id'], '3')
+            await self.doAppTask(item['id'], '3')
 
-    def doTask(self):
+    async def doTask(self):
         for item in self.taskConfigVos:
             if self.risk:
                 return
             if item['taskStage'] == 0:
                 printf(f"[{self.Name}]\t【{item['taskName']}】 任务未领取, 开始领取此任务")
                 self.taskId = item['id']
-                res = self.necklace_startTask(item['id'])
+                res = await self.necklace_startTask(item['id'])
                 if res and res['rtn_code'] == 0:
                     printf(f"[{self.Name}]\t【{item['taskName']}】 任务领取成功, 开始完成此任务")
-                    self.reportTask(item)
-                    randomWait(1, 2)
+                    await self.reportTask(item)
+                    await randomWait(1, 2)
             elif item['taskStage'] == 2:
                 printf(f"[{self.Name}]\t【{item['taskName']}】 任务已做完,奖励未领取")
             elif item['taskStage'] == 3:
                 printf(f"[{self.Name}]\t【{item['taskName']}】 奖励已领取")
             elif item['taskStage'] == 1:
                 printf(f"[{self.Name}]\t【{item['taskName']}】 任务已领取但未完成,开始完成此任务")
-                self.reportTask(item)
-                randomWait(1, 2)
+                await self.reportTask(item)
+                await randomWait(1, 2)
 
-    def main(self):
-        self.necklace_homePage()
+    async def main(self):
+        if not await self.is_login():
+            self.printf("未登录")
+            return
+        await self.necklace_homePage()
         if self.risk:
             return
-        wait(2)
-        self.doTask()
-        wait(2)
-        self.necklace_homePage()
-        self.receiveBubbles()
+        await wait(2)
+        await self.doTask()
+        await wait(2)
+        await self.necklace_homePage()
+        await self.receiveBubbles()
 
 
 if __name__ == '__main__':
     task = TaskClass("task")
     task.name = 'DDQ'
     task.init_config(Necklace)
-    task.main("点点券-任务")
+    asyncio.run(task.main("点点券-任务"))
