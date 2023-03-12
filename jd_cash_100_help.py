@@ -57,16 +57,16 @@ class Cash100UserClass(UserClass):
             self.can_help = False
             if res_data.get("success", False):
                 if data := res_data.get("data"):
-                    match data.get("helpResult"):
-                        case 1:
-                            inviter.help_num += 1
-                            self.printf_help(f"----->  {inviter.Name}:\t助力成功", inviter)
-                        case 6:
-                            self.printf_help(f"----->  {inviter.Name}:\t助力过了", inviter)
-                        case None:
-                            self.printf_help(f"----->  {inviter.Name}:\t助力失败：{str(res_data)}", inviter)
-                        case _:
-                            self.printf_help(f"----->  {inviter.Name}:\t未知助力结果：{data.get('helpResult')}", inviter)
+                    helpResult = data.get("helpResult")
+                    if helpResult == 1:
+                        inviter.help_num += 1
+                        self.printf_help(f"----->  {inviter.Name}:\t助力成功", inviter)
+                    elif helpResult == 6:
+                        self.printf_help(f"----->  {inviter.Name}:\t助力过了", inviter)
+                    elif helpResult is None:
+                        self.printf_help(f"----->  {inviter.Name}:\t助力失败：{str(res_data)}", inviter)
+                    else:
+                        self.printf_help(f"----->  {inviter.Name}:\t未知助力结果：{data.get('helpResult')}", inviter)
                 else:
                     self.printf_help(f"----->  {inviter.Name}:\t助力失败：{str(res_data)}", inviter)
             else:
