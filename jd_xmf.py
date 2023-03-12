@@ -4,7 +4,7 @@ export RabbitToken="token值"
 export XMF_CK_REVERSE="1 或 2 或 3"
 export XMF_HELP_PIN="1~3或pin1,pin2,pin3或者ALL"
 export XMF_MAX_HELP_NUM=30
-export XMF_READ_FILE_CK="默认false" # ck文件为XMF_ck.txt，格式为一行一个ck
+export XMF_READ_FILE_CK="默认false" # ck文件为ZNS_ZD_ck.txt，格式为一行一个ck
 
 变量:
 RabbitToken： 机器人给你发的token
@@ -264,13 +264,14 @@ class XMFUserClass(UserClass):
                 self.printf(f"成功兑换魔方数量:\t{i}")
                 continue
             await randomWait(3, 3)
+            exchange = True
             prize = [prize_item["rewardName"] for prize_item in item['rewards']]
             for prize_msg in prize:
                 if "京豆" not in prize_msg:
-                    prize = []
-            if not prize:
+                    exchange = False
+            if not exchange:
                 self.printf(f"奖品：{'/'.join(prize)}:\t不兑换")
-                break
+                continue
             self.printf(f"奖品：{'/'.join(prize)}:\t去兑换")
             if XmfRewardList == ['']:
                 await self.doInteractiveAssignment(item["encryptAssignmentId"], itemId='', ext={"exchangeNum": 1}, reward=True)
