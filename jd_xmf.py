@@ -4,7 +4,7 @@ export RabbitToken="token值"
 export XMF_CK_REVERSE="1 或 2 或 3"
 export XMF_HELP_PIN="1~3或pin1,pin2,pin3或者ALL"
 export XMF_MAX_HELP_NUM=30
-export XMF_READ_FILE_CK="默认false" # ck文件为ZNS_ZD_ck.txt，格式为一行一个ck
+export XMF_READ_FILE_CK="默认false" # ck文件为XMF_ck.txt，格式为一行一个ck
 
 变量:
 RabbitToken： 机器人给你发的token
