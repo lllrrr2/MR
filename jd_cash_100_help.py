@@ -1,3 +1,8 @@
+'''
+new Env('邀好友抽现金-助力');
+export RabbitToken="token值"
+
+'''
 import asyncio
 import json
 import re

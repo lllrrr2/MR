@@ -1,3 +1,8 @@
+'''
+new Env('团圆领红包-助力');
+export RabbitToken="token值"
+
+'''
 import asyncio
 import json
 

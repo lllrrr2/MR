@@ -4,14 +4,14 @@ export RabbitToken="token值"
 export FCWB_CK_REVERSE="1 或 2 或 3"
 export FCWB_HELP_PIN="1~3或pin1,pin2,pin3或者ALL"
 export FCWB_MAX_HELP_NUM=30
-export FCWB_READ_FILE_CK="默认false" # ck文件为FCWB_ck.txt，格式为一行一个ck
+export FCWB_READ_FILE_CK="默认false" # ck文件为ZNS_ZD_ck.txt，格式为一行一个ck
 
 变量:
 RabbitToken： 机器人给你发的token
 FCWB_HELP_PIN：设置车头
 FCWB_CK_REVERSE：1：正序，2：反序，3：乱序
 FCWB_MAX_HELP_NUM：每个队伍的人数
-FCWB_READ_FILE_CK：读取ck文件，默认false，ck文件为FCWB_ck.txt，格式为一行一个ck
+FCWB_READ_FILE_CK：读取ck文件，默认false，ck文件为ZNS_ZD_ck.txt，格式为一行一个ck
 
 log剩余次数大于5000方可使用
 '''
@@ -41,22 +41,11 @@ class FcwbUserClass(UserClass):
         self._help_num = 0
         self.roundStop = False
         self.needNum = 0
-        self.minBlood = 0
+        self.minBlood = 1
         self.UA = self.lite_UA
         self.stopFlag = False
         self.Origin = "https://bnzf.jd.com"
         self.referer = "https://bnzf.jd.com/?activityId=pTTvJeSTrpthgk9ASBVGsw&inviterId=&inviterCode=&utm_user=plusmember&ad_od=share&utm_source=androidapp&utm_medium=appshare&utm_campaign=t_335139774&utm_term=Wxfriends&lng=106.477132&lat=29.502772&sid=84c83c76030880654e4e98b6bcda688w&un_area=4_50952_106_0"
-
-    # def init(self):
-    #     self.ua = self.default_jsb_ua
-    #     headers = {
-    #         "Cookie": self.cookie,
-    #         "User-Agent": self.ua,
-    #         'Content-Type': "application/x-www-form-urlencoded; charset=UTF-8",
-    #         "Origin": "https://bnzf.jd.com",
-    #         "referer": "https://bnzf.jd.com/?activityId=pTTvJeSTrpthgk9ASBVGsw&inviterId=&inviterCode=&utm_user=plusmember&ad_od=share&utm_source=androidapp&utm_medium=appshare&utm_campaign=t_335139774&utm_term=Wxfriends&lng=106.477132&lat=29.502772&sid=84c83c76030880654e4e98b6bcda688w&un_area=4_50952_106_0"
-    #     }
-    #     self.headers = headers
 
     async def happyDigHelpList(self):
         try:
@@ -306,7 +295,7 @@ class FcwbUserClass(UserClass):
             if result.get('code') == 0:
                 strs = chunkConf[result['data']['chunk']['type']]
                 self.printf(
-                    f"({paramIn['rowIdx']},{paramIn['colIdx']})挖到了{result['data']['chunk'].get('value', '')}{strs}")
+                    f"({paramIn['rowIdx']},{paramIn['colIdx']})挖到了{result['data']['chunk'].get('value') or ''}{strs}")
                 if result['data']['chunk']['type'] == 1:
                     self.printf(f"出现优惠券，不挖了")
                     self.stopFlag = True
