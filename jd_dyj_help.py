@@ -13,6 +13,7 @@ DYJ_HELP_CK_REVERSE：1：正序，2：反序，3：乱序
 DYJ_HELP_MAX_HELP_NUM：每个队伍的人数
 DYJ_HELP_READ_FILE_CK：读取ck文件，默认false，ck文件为DYJ_HELP_ck.txt，格式为一行一个ck
 '''
+import asyncio
 import json
 import time
 
@@ -220,6 +221,9 @@ class DyjUserClass(UserClass):
 
     def get_invite_code(self):
         try:
+            if not await self.is_login():
+                self.printf("未登录")
+                return
             # self.home()
             body = {
                 "activeId": '63526d8f5fe613a6adb48f03',
@@ -259,6 +263,9 @@ class DyjUserClass(UserClass):
 
     def help(self, inviter):
         try:
+            if not await self.is_login():
+                self.printf("未登录")
+                return
             if inviter.help_num >= inviter.MAX_HELP_NUM:
                 inviter.need_help = False
                 printf(f"车头[{inviter.Name}]\t 助力已满({inviter.help_num}/{inviter.MAX_HELP_NUM})")
@@ -308,4 +315,4 @@ if __name__ == '__main__':
     task.MAX_HELP_NUM = 10
     task.name = 'DYJ_HELP'
     task.init_config(DyjUserClass)
-    task.main("大赢家-助力")
+    asyncio.run(task.main("大赢家-助力"))
