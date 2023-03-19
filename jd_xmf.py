@@ -37,7 +37,7 @@ class XMFUserClass(UserClass):
         self.ProjectPoolId = ''
         self.giftProjectId = ''
         self.giftProjectPoolId = ''
-        self.force_app_ck = True
+        # self.force_app_ck = True
         self.risk = False
         self.mofang_exchage = True
         self.Origin = "https://h5.m.jd.com"
@@ -167,7 +167,9 @@ class XMFUserClass(UserClass):
             print_trace()
 
     async def main(self):
-        printf(f"----------【账号{self.index}】{self.Name}----------")
+        if not await self.is_login():
+            self.printf("未登录")
+            return
         await self.getInteractionHomeInfo()
         if not self.projectId:
             return
@@ -176,7 +178,7 @@ class XMFUserClass(UserClass):
             for vo in taskList:
                 if vo.get("ext") and vo['ext'].get('extraType') != 'brandMemberList' and vo['ext'].get(
                         'extraType') != 'assistTaskDetail':
-                    if vo['completionCnt'] < vo['assignmentTimesLimit']:
+                    if vo.get('completionCnt', 0) < vo.get('assignmentTimesLimit', 0):
                         self.printf(
                             f"任务：{vo['assignmentName']}，进度：{vo['completionCnt']}/{vo['assignmentTimesLimit']}，去完成")
                         if self.risk:
@@ -233,13 +235,15 @@ class XMFUserClass(UserClass):
                 elif vo.get("ext") and vo['ext'].get('extraType') == 'brandMemberList':
                     pass
                 else:
-                    pass
-                    if vo['completionCnt'] < vo['assignmentTimesLimit']:
+                    if vo.get('completionCnt') is None:
+                        self.printf("未登陆")
+                        return
+                    if vo.get('completionCnt', 0) < vo.get('assignmentTimesLimit', 0):
                         self.printf(
-                            f"任务：{vo['assignmentName']}，进度：{vo['completionCnt']}/{vo['assignmentTimesLimit']}，去完成")
+                            f"任务：{vo['assignmentName']}，进度：{vo.get('completionCnt', 0)}/{vo['assignmentTimesLimit']}，去完成")
                         for i in range(vo['assignmentTimesLimit']):
                             await randomWait(3, 3)
-                            if vo['completionCnt'] < vo['assignmentTimesLimit']:
+                            if vo.get('completionCnt', 0) < vo['assignmentTimesLimit']:
                                 await self.doInteractiveAssignment(vo['encryptAssignmentId'], itemId=None, completionFlag=True)
                                 vo['completionCnt'] += 1
                     else:
@@ -280,7 +284,7 @@ class XMFUserClass(UserClass):
                     await self.doInteractiveAssignment(item["encryptAssignmentId"], itemId='', ext={"exchangeNum": 1}, reward=True)
                 else:
                     self.printf(f"设置的不兑换")
-        printf("\n")
+        printf("")
 
 
 if __name__ == '__main__':
