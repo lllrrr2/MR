@@ -148,7 +148,7 @@ class SignUserClass(UserClass):
         headers = deepcopy(self.headers)
         headers['Content-Type'] = None
         res = requests.get(url, self.headers)
-        pattern = re.findall(r"try\{window\.__ihubData__ *\=(.*?)\}catch\(e\)", res.text)
+        pattern = re.findall(r"try\{window\.__ihubData__ *\=(.*?);if", res.text)
         if pattern:
             data = json.loads(pattern[0])
             for item in data.get("codeFloors", []):
