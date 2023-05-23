@@ -152,7 +152,7 @@ class CKDRedUserClass(UserClass):
                     redpacketInfo = awardInfo.get("redpacketInfo", {})
                     if couponInfo:
                         self.printf(
-                            f"抽到优惠券: {couponInfo['quote']} - {couponInfo['discount']}({couponInfo['limitStr']}),使用时间: {couponInfo['desc']}")
+                            f"抽到优惠券: {couponInfo['quota']} - {couponInfo['discount']}({couponInfo['limitStr']}),使用时间: {couponInfo['desc']}")
                     if redpacketInfo:
                         self.printf(
                             f"抽到红包: {redpacketInfo['value']}元({redpacketInfo['name']}),使用时间: {redpacketInfo['desc']}")
