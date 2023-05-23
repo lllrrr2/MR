@@ -53,18 +53,13 @@ class CKDHelpUserClass(UserClass):
         return _opt
 
     def log_format(self, body, log_data):
-        log = log_data["log"]
-        random = log_data["random"]
-        return {"body": json.dumps(body, separators=(',', ':')), "joylog": f"{random}*{log}"}
-
-    def searchParams(self, searchParams):
-        _searchParams = {
-            "client": "iOS",
-            "clientVersion": "11.4.0",
-            "appid": "interaction_share",
+        body.update({"log": log_data["log"]})
+        body.update({"random": log_data["random"]})
+        # body = f"body={json.dumps(body, separators=(',', ':'))}"
+        body = {
+            "body": json.dumps(body, separators=(',', ':'))
         }
-        _searchParams.update(searchParams)
-        return _searchParams
+        return body
 
     @property
     def help_num(self):
@@ -87,7 +82,7 @@ class CKDHelpUserClass(UserClass):
             status, result = await self.jd_api(await self.opt(opt))
             self.need_help = False
             if result and result.get("code") == 0:
-                if result.get("data") and result['data'].get('bizCode') == 0 and result['data'].get('inviteId'):
+                if result.get("data") and result['data'].get('bizCode') == 0 and result['data']["result"].get('inviteId'):
                     self.help_num = result['data']['result']['taskVos'][0]['times']
                     self.inviteCode = result['data']['result']['inviteId']
                     self.printf(f"【助力码】: \t{self.inviteCode}")
@@ -106,12 +101,12 @@ class CKDHelpUserClass(UserClass):
                         pass
                     elif '好友人气爆棚了' in msg:
                         self.can_help = False
-                    elif msg == 'success':
+                    elif msg == "success":
                         self.need_help = False
                         self.printf("助力已满")
                         return
                     print_api_error(opt, status)
-                    self.printf(result)
+                    print(result)
             else:
                 msg = result['msg']
                 if '登陆失败' in msg:
@@ -123,6 +118,8 @@ class CKDHelpUserClass(UserClass):
 
     async def help(self, inviter):
         try:
+            if not inviter.need_help:
+                return
             if inviter.help_num >= inviter.MAX_HELP_NUM:
                 inviter.need_help = False
                 printf(f"车头[{inviter.Name}]\t 助力已满({inviter.help_num}/{inviter.MAX_HELP_NUM})")
@@ -169,7 +166,7 @@ class CKDHelpUserClass(UserClass):
 if __name__ == '__main__':
     task = TaskClass("invite")
     task.MAX_HELP_NUM = 8
-    task.name = 'CKD_HELP'
+    task.name = 'ZNS_HELP'
     task.need_appck = True
     task.init_config(CKDHelpUserClass)
     asyncio.run(task.main("全民拆快递-助力"))
