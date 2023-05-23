@@ -1,14 +1,10 @@
 '''
-cron: 6 6 6 6 6  python3 jd_cash_100.py
 new Env('邀好友抽现金');
 export RabbitToken="token值"
 
 '''
 import asyncio
 import json
-import re
-
-import aiohttp
 
 from utils.common import UserClass, print_trace, TaskClass, wait, randomWait, printf, get_error_msg
 
@@ -52,7 +48,7 @@ class Cash100UserClass(UserClass):
 
     async def inviteFissionHome(self):
         try:
-            body = {"linkId": "r6t4R7GyqpQdtgFN9juaQw", "inviter": "lgoudpmLcroNSzmdyMeyzL05ITAYtXoqcTLLVY7_anc"}
+            body = {"linkId": "Wvzc_VpNTlSkiQdHT8r7QA", "inviter": "lgoudpmLcroNSzmdyMeyzL05ITAYtXoqcTLLVY7_anc"}
             opt = {
                 "functionId": "inviteFissionHome",
                 "body": body,
@@ -83,7 +79,7 @@ class Cash100UserClass(UserClass):
 
     async def inviteFissionBeforeHome(self):
         try:
-            body = {"linkId": "r6t4R7GyqpQdtgFN9juaQw", "isJdApp": True,
+            body = {"linkId": "Wvzc_VpNTlSkiQdHT8r7QA", "isJdApp": True,
                     "inviter": ""}
             opt = {
                 "functionId": "inviteFissionBeforeHome",
@@ -111,7 +107,7 @@ class Cash100UserClass(UserClass):
 
     async def inviteFissionDrawPrize(self):
         try:
-            body = {"linkId": "r6t4R7GyqpQdtgFN9juaQw", "lbs": "null"}
+            body = {"linkId": "Wvzc_VpNTlSkiQdHT8r7QA", "lbs": "null"}
             opt = {
                 "functionId": "inviteFissionDrawPrize",
                 "body": body,
@@ -134,12 +130,14 @@ class Cash100UserClass(UserClass):
             else:
                 msg = get_error_msg(res_data)
                 self.printf(f"抽奖失败: {msg}")
+            return res_data
         except:
             print_trace()
+            return res_data
 
-    async def superRedBagList(self):
+    async def superRedBagList(self, pageNum):
         try:
-            body = {"linkId": "r6t4R7GyqpQdtgFN9juaQw", "pageNum": 1, "pageSize": 100, "business": "fission"}
+            body = {"linkId": "Wvzc_VpNTlSkiQdHT8r7QA", "pageNum": pageNum, "pageSize": 100, "business": "fission"}
             opt = {
                 "functionId": "superRedBagList",
                 "body": body,
@@ -155,19 +153,24 @@ class Cash100UserClass(UserClass):
             if code == 0 and res_data.get("data"):
                 if items := res_data['data'].get("items", []):
                     for item in items:
-                        if item['prizeType'] == 4 and item["state"] == 0:
-                            await self.apCashWithDraw(item)
+                        if item['prizeType'] == 4 and (item["state"] == 0 or item['state'] == 2):
+                            if not await self.apCashWithDraw(item):
+                                await self.apRecompenseDrawPrize(item)
                             await randomWait(4, 2)
             else:
                 msg = get_error_msg(res_data)
-                self.printf(f"查询体现列表失败: {msg}")
+                self.printf(f"查询提现列表失败: {msg}")
+            return res_data
         except:
             print_trace()
+            return {}
 
     async def apCashWithDraw(self, item):
+        success = False
         try:
-            body = {"linkId": "r6t4R7GyqpQdtgFN9juaQw", "businessSource": "NONE",
-                    "base": {"id": item['id'], "business": "fission", "poolBaseId": item['poolBaseId'], "prizeGroupId": item['prizeGroupId'],
+            body = {"linkId": "Wvzc_VpNTlSkiQdHT8r7QA", "businessSource": "NONE",
+                    "base": {"id": item['id'], "business": "fission", "poolBaseId": item['poolBaseId'],
+                             "prizeGroupId": item['prizeGroupId'],
                              "prizeBaseId": item['prizeBaseId'], "prizeType": 4}}
             opt = {
                 "functionId": "apCashWithDraw",
@@ -182,22 +185,61 @@ class Cash100UserClass(UserClass):
             }
             status, res_data = await self.jd_api(await self.opt(opt))
             code = res_data.get("code", status)
-
             if code == 0 and res_data.get("data"):
                 if res_data['data'].get("status") == '1000':
                     error_msg = get_error_msg(res_data['data'])
                     self.printf(error_msg)
                 elif res_data['data'].get("status") == '310':
-                    msg = res_data.get('data', {}).get('message', '')
-                    self.printf(f"提现[{item['prizeConfigName']}]: {msg}")
+                    error_msg = get_error_msg(res_data['data'])
+                    self.printf(f"提现[{item['prizeConfigName']}]: {error_msg}")
+                    success = True
                 elif res_data['data'].get("status") == '50056':
-                    msg = res_data.get('data', {}).get('message', '')
-                    self.printf(f"提现[{item['prizeConfigName']}]失败: {msg}")
+                    error_msg = get_error_msg(res_data['data'])
+                    self.printf(f"提现[{item['prizeConfigName']}]失败: {error_msg}")
+                elif res_data['data'].get("status") == '50058':
+                    error_msg = get_error_msg(res_data['data'])
+                    self.printf(f"提现[{item['prizeConfigName']}]失败: {error_msg}")
+                elif res_data['data'].get("status") == '50059':
+                    error_msg = get_error_msg(res_data['data'])
+                    self.printf(f"提现[{item['prizeConfigName']}]失败: {error_msg}")
                 else:
                     self.printf(str(res_data))
             else:
                 msg = get_error_msg(res_data)
                 self.printf(f"提现失败: {msg}")
+        except:
+            print_trace()
+        return success
+
+    async def apRecompenseDrawPrize(self, item):
+        try:
+            body = {
+                "linkId": "Wvzc_VpNTlSkiQdHT8r7QA",
+                "businessSource": "fission",
+                "drawRecordId": item['id'],
+                "business": "fission",
+                "poolId": item['poolBaseId'],
+                "prizeGroupId": item['prizeGroupId'],
+                "prizeId": item["prizeBaseId"],
+            }
+            opt = {
+                "functionId": "apRecompenseDrawPrize",
+                "body": body,
+                "appId": "8c6ae",
+                "method": "post",
+                "searchParams": self.searchParams({
+                    "functionId": "apRecompenseDrawPrize",
+                    "body": json.dumps(body, separators=(",", ":"))
+                }),
+                "h5st": True
+            }
+            status, res_data = await self.jd_api(await self.opt(opt))
+            code = res_data.get("code", status)
+            if code == 0 and res_data.get("data"):
+                self.printf(f"兑换[{item['prizeConfigName'].replace('现金','红包')}]成功")
+            else:
+                msg = get_error_msg(res_data)
+                self.printf(f"兑换[{item['prizeConfigName'].replace('现金','红包')}]失败: {msg}")
         except:
             print_trace()
 
@@ -207,10 +249,22 @@ class Cash100UserClass(UserClass):
             return
         await self.inviteFissionBeforeHome()
         await self.inviteFissionHome()
-        for i in range(self.draw_num):
-            await self.inviteFissionDrawPrize()
-            # await randomWait(5, 2)
-        await self.superRedBagList()
+        while True:
+            res_data = await self.inviteFissionDrawPrize()
+            code = res_data.get("code")
+            msg = get_error_msg(res_data)
+            if msg == "活动太火爆，请稍后重试~":
+                continue
+            if code != 0:
+                break
+        pageNum = 1
+        while True:
+            res_data = await self.superRedBagList(pageNum)
+            if res_data.get("data", {}).get("hasMore", {}):
+                pageNum = pageNum + 1
+                await self.superRedBagList(pageNum)
+            else:
+                break
 
 
 if __name__ == '__main__':

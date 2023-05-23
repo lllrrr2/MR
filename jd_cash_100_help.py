@@ -1,5 +1,4 @@
 '''
-cron: 6 6 6 6 6  python3 jd_cash_100_help.py
 new Env('邀好友抽现金-助力');
 export RabbitToken="token值"
 
@@ -44,7 +43,7 @@ class Cash100UserClass(UserClass):
             if not await self.is_login():
                 self.printf("未登录")
                 return
-            body = {"linkId": "r6t4R7GyqpQdtgFN9juaQw", "isJdApp": True,
+            body = {"linkId": "Wvzc_VpNTlSkiQdHT8r7QA", "isJdApp": True,
                     "inviter": inviter.invite_code}
             opt = {
                 "functionId": "inviteFissionBeforeHome",
@@ -69,12 +68,11 @@ class Cash100UserClass(UserClass):
                     elif helpResult is None:
                         self.printf_help(f"----->  {inviter.Name}:\t助力失败：{str(res_data)}", inviter)
                     else:
-                        print(res_data)
                         self.printf_help(f"----->  {inviter.Name}:\t未知助力结果：{data.get('helpResult')}", inviter)
                 else:
                     self.printf_help(f"----->  {inviter.Name}:\t助力失败：{str(res_data)}", inviter)
             else:
-                msg = res_data.get("errMsg", None)
+                msg = res_data.get("errMsg", "")
                 if "火爆" in msg:
                     self.can_help = False
                 self.printf_help(f"----->  {inviter.Name}:\t助力失败：{msg}", inviter)
@@ -95,7 +93,7 @@ class Cash100UserClass(UserClass):
 
     async def inviteFissionHome(self):
         try:
-            body = {"linkId": "r6t4R7GyqpQdtgFN9juaQw", "inviter": "lgoudpmLcroNSzmdyMeyzL05ITAYtXoqcTLLVY7_anc"}
+            body = {"linkId": "Wvzc_VpNTlSkiQdHT8r7QA", "inviter": "lgoudpmLcroNSzmdyMeyzL05ITAYtXoqcTLLVY7_anc"}
             opt = {
                 "functionId": "inviteFissionHome",
                 "body": body,
@@ -123,7 +121,7 @@ class Cash100UserClass(UserClass):
 
     async def wheelsHome(self):
         try:
-            body = {"linkId": "r6t4R7GyqpQdtgFN9juaQw"}
+            body = {"linkId": "Wvzc_VpNTlSkiQdHT8r7QA"}
             opt = {
                 "functionId": "wheelsHome",
                 "body": body,
