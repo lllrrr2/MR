@@ -172,4 +172,4 @@ if __name__ == '__main__':
     task.name = 'CKD_HELP'
     task.need_appck = True
     task.init_config(CKDHelpUserClass)
-    asyncio.run(task.main("炸年兽-助力"))
+    asyncio.run(task.main("全民拆快递-助力"))
