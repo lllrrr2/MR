@@ -39,12 +39,13 @@ class ZnsUserClass(UserClass):
         _opt = {
             "method": "post",
             "log": False,
-            # "api": "client.action",
+            "api": "client.action",
             "body_param": {
                 "appid": "signed_wh5",
-                "client": "m",
-                "clientVersion": "-1",
-                "functionId": opt['functionId']
+                "client": "wh5",
+                "clientVersion": "1.0.0",
+                "functionId": opt['functionId'],
+                "x-api-eid-token": "jdd03VMQVAGH3ZQWD5EP26AFGOSHO2JGIN5QWMR477BRTAPRE3Q6RAPCHR6U7WUH4KCZIHQVWNHLPTCW6LXZ3C4URL24UYIAAAAMII7NHTVQAAAAACR3T433KGEJQ44X"
             }
         }
         _opt.update(opt)
@@ -53,7 +54,7 @@ class ZnsUserClass(UserClass):
     def log_format(self, body, log_data):
         log = log_data["log"]
         random = log_data["random"]
-        return {"body": json.dumps(body, separators=(',', ':')), "joylog": quote(f"{random}*{log}")}
+        return {"body": json.dumps(body, separators=(',', ':')), "joylog": f"{random}*{log}"}
 
     def searchParams(self, searchParams):
         _searchParams = {
@@ -205,7 +206,7 @@ class ZnsUserClass(UserClass):
                 "functionId": "promote_getSignHomeData",
                 "appId": "2a045",
                 "searchParams": self.searchParams({
-                    "functionId": "promote_getMainMsgPopUp",
+                    "functionId": "promote_getSignHomeData",
                     "body": json.dumps(body, separators=(",", ":"))
                 }),
                 "h5st": True,
@@ -348,7 +349,7 @@ class ZnsUserClass(UserClass):
                 "body": body,
                 "appId": "2a045",
                 "searchParams": self.searchParams({
-                    "functionId": "promote_getMainMsgPopUp",
+                    "functionId": "promote_collectScore",
                     "body": json.dumps(body, separators=(",", ":"))
                 }),
                 "h5st": True,
@@ -635,7 +636,7 @@ class ZnsUserClass(UserClass):
                         if productList[j]['status'] != 1:
                             continue
                         taskToken = productList[j]['taskToken']
-                        body = {"taskId": taskId, "taskToken": taskToken}
+                        body = {"taskId": taskId, "taskToken": taskToken, "actionType": 0}
                         await self.promote_collectScore(body)
                         await randomWait(3, 2)
                         needTime -= 1

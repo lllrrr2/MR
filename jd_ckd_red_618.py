@@ -10,6 +10,7 @@ log剩余次数大于5000方可使用
 '''
 import asyncio
 import json
+from urllib.parse import quote
 
 from utils.common import UserClass, printf, print_api_error, print_trace, TaskClass, get_error_msg
 
@@ -47,25 +48,24 @@ class CKDRedUserClass(UserClass):
         # self.set_shshshfpb()
         _opt = {
             "method": "post",
-            "log": True,
-            "body_param": {
-                "appid": "interaction_share",
-                "client": "wh5",
-                "clientVersion": "1.0.0"
-            },
             "refresh_proxy_func": refresh_proxy_func
         }
         _opt.update(opt)
         return _opt
 
     def log_format(self, body, log_data):
-        body.update({"log": log_data["log"]})
-        body.update({"random": log_data["random"]})
-        # body = f"body={json.dumps(body, separators=(',', ':'))}"
-        body = {
-            "body": json.dumps(body, separators=(',', ':'))
+        log = log_data["log"]
+        random = log_data["random"]
+        return {"body": json.dumps(body, separators=(',', ':')), "joylog": f"{random}*{log}"}
+
+    def searchParams(self, searchParams):
+        _searchParams = {
+            "client": "iOS",
+            "clientVersion": "11.4.0",
+            "appid": "interaction_share",
         }
-        return body
+        _searchParams.update(searchParams)
+        return _searchParams
 
     @property
     def help_num(self):
@@ -83,7 +83,13 @@ class CKDRedUserClass(UserClass):
             opt = {
                 "functionId": "promote_pk_getMsgPopup",
                 "body": body,
-                "need_log": True
+                "appId": "2a045",
+                "searchParams": self.searchParams({
+                    "functionId": "promote_pk_getMsgPopup",
+                    "body": json.dumps(body, separators=(",", ":"))
+                }),
+                "h5st": True,
+                "log": True
             }
             status, result = await self.jd_api(await self.opt(opt))
             if result and result.get("code") == 0:
@@ -181,7 +187,13 @@ class CKDRedUserClass(UserClass):
             opt = {
                 "functionId": "promote_pk_getHomeData",
                 "body": body,
-                "need_log": False
+                "appId": "2a045",
+                "searchParams": self.searchParams({
+                    "functionId": "promote_pk_getHomeData",
+                    "body": json.dumps(body, separators=(",", ":"))
+                }),
+                "h5st": True,
+                "log": False
             }
             status, result = await self.jd_api(await self.opt(opt))
             if result and result.get("code") == 0:
@@ -220,6 +232,12 @@ class CKDRedUserClass(UserClass):
             }
             opt = {
                 "functionId": "promote_pk_assist",
+                "appId": "2a045",
+                "searchParams": self.searchParams({
+                    "functionId": "promote_pk_assist",
+                    "body": json.dumps(body, separators=(",", ":"))
+                }),
+                "h5st": True,
                 "body": body,
                 "log": True
             }
@@ -263,7 +281,12 @@ class CKDRedUserClass(UserClass):
             opt = {
                 "functionId": "promote_pk_getHomeData",
                 "body": body,
-                "need_log": False
+                "searchParams": self.searchParams({
+                    "functionId": "promote_pk_getHomeData",
+                    "body": json.dumps(body, separators=(",", ":"))
+                }),
+                "h5st": True,
+                "log": False
             }
             status, result = await self.jd_api(await self.opt(opt))
             if result and result.get("code") == 0:
@@ -291,5 +314,6 @@ class CKDRedUserClass(UserClass):
 if __name__ == '__main__':
     task = TaskClass("invite")
     task.name = 'CKD_RED'
+    task.MAX_HELP_NUM = 200
     task.init_config(CKDRedUserClass)
     asyncio.run(task.main("拆快递领红包"))
