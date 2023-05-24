@@ -49,7 +49,7 @@ class Cash100UserClass(UserClass):
             opt = {
                 "functionId": "inviteFissionBeforeHome",
                 "body": body,
-                "appId": "c02c6",
+                "appId": "02f8d",
                 "searchParams": self.searchParams({
                     "functionId": "inviteFissionBeforeHome",
                     "body": json.dumps(body, separators=(",", ":"))
@@ -98,7 +98,7 @@ class Cash100UserClass(UserClass):
             opt = {
                 "functionId": "inviteFissionHome",
                 "body": body,
-                "appId": "c02c6",
+                "appId": "eb67b",
                 "searchParams": self.searchParams({
                     "functionId": "inviteFissionHome",
                     "body": json.dumps(body, separators=(",", ":"))
