@@ -40,26 +40,31 @@ class CKDHelpUserClass(UserClass):
         # self.set_shshshfpb()
         _opt = {
             "method": "post",
-            "log": True,
+            "log": False,
             "api": "client.action",
             "body_param": {
                 "appid": "signed_wh5",
                 "client": "wh5",
                 "clientVersion": "1.0.0",
-                "functionId": opt['functionId']
+                "functionId": opt['functionId'],
             }
         }
         _opt.update(opt)
         return _opt
 
     def log_format(self, body, log_data):
-        body.update({"log": log_data["log"]})
-        body.update({"random": log_data["random"]})
-        # body = f"body={json.dumps(body, separators=(',', ':'))}"
-        body = {
-            "body": json.dumps(body, separators=(',', ':'))
+        log = log_data["log"]
+        random = log_data["random"]
+        return {"body": json.dumps(body, separators=(',', ':')), "joylog": f"{random}*{log}"}
+
+    def searchParams(self, searchParams):
+        _searchParams = {
+            "client": "iOS",
+            "clientVersion": "11.4.0",
+            "appid": "signed_wh5",
         }
-        return body
+        _searchParams.update(searchParams)
+        return _searchParams
 
     @property
     def help_num(self):
@@ -80,7 +85,7 @@ class CKDHelpUserClass(UserClass):
             opt = {
                 "functionId": "promote_getTaskDetail",
                 "body": body,
-                "need_log": False
+                "log": True
             }
             status, result = await self.jd_api(await self.opt(opt))
             self.need_help = False
@@ -137,6 +142,13 @@ class CKDHelpUserClass(UserClass):
             opt = {
                 "functionId": "promote_collectScore",
                 "body": body,
+                "appId": "2a045",
+                "searchParams": self.searchParams({
+                    "functionId": "promote_collectScore",
+                    "body": json.dumps(body, separators=(",", ":"))
+                }),
+                "h5st": True,
+                "log": True
             }
             status, res_data = await self.jd_api(await self.opt(opt))
             code = res_data['code']
