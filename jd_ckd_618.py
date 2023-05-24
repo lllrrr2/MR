@@ -856,15 +856,15 @@ class ZnsUserClass(UserClass):
 
         await self.promote_getHomeData()
 
-        self.printf("开始领取奖励")
-        self.raiseFlag = True
-        self.homeMainInfo = self.homeData['result']['homeMainInfo']
-        self.printf("开始领取奖励")
-        for sceneId in range(2004, 2024):
-            gradeList = await self.promote_floating_layer(str(sceneId))
-            for grade in gradeList:
-                if grade["status"] == 1:
-                    await self.promote_grade_award(grade['id'])
+        # self.printf("开始领取奖励")
+        # self.raiseFlag = True
+        # self.homeMainInfo = self.homeData['result']['homeMainInfo']
+        # self.printf("开始领取奖励")
+        # for sceneId in range(2004, 2024):
+        #     gradeList = await self.promote_floating_layer(str(sceneId))
+        #     for grade in gradeList:
+        #         if grade["status"] == 1:
+        #             await self.promote_grade_award(grade['id'])
 
         # if self.homeData['result']:
         #     printf("")
