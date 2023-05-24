@@ -1,5 +1,5 @@
 '''
-new Env('邀好友抽现金');
+new Env('京东app版—邀好友抽现金');
 export RabbitToken="token值"
 
 '''
@@ -48,7 +48,7 @@ class Cash100UserClass(UserClass):
 
     async def inviteFissionHome(self):
         try:
-            body = {"linkId": "Wvzc_VpNTlSkiQdHT8r7QA", "inviter": "lgoudpmLcroNSzmdyMeyzL05ITAYtXoqcTLLVY7_anc"}
+            body = {"linkId": "c6Bkpjp7dYcvQwO9-PR7-g", "inviter": "lgoudpmLcroNSzmdyMeyzL05ITAYtXoqcTLLVY7_anc"}
             opt = {
                 "functionId": "inviteFissionHome",
                 "body": body,
@@ -79,7 +79,7 @@ class Cash100UserClass(UserClass):
 
     async def inviteFissionBeforeHome(self):
         try:
-            body = {"linkId": "Wvzc_VpNTlSkiQdHT8r7QA", "isJdApp": True,
+            body = {"linkId": "c6Bkpjp7dYcvQwO9-PR7-g", "isJdApp": True,
                     "inviter": ""}
             opt = {
                 "functionId": "inviteFissionBeforeHome",
@@ -107,7 +107,7 @@ class Cash100UserClass(UserClass):
 
     async def inviteFissionDrawPrize(self):
         try:
-            body = {"linkId": "Wvzc_VpNTlSkiQdHT8r7QA", "lbs": "null"}
+            body = {"linkId": "c6Bkpjp7dYcvQwO9-PR7-g", "lbs": "null"}
             opt = {
                 "functionId": "inviteFissionDrawPrize",
                 "body": body,
@@ -137,7 +137,7 @@ class Cash100UserClass(UserClass):
 
     async def superRedBagList(self, pageNum):
         try:
-            body = {"linkId": "Wvzc_VpNTlSkiQdHT8r7QA", "pageNum": pageNum, "pageSize": 100, "business": "fission"}
+            body = {"linkId": "c6Bkpjp7dYcvQwO9-PR7-g", "pageNum": pageNum, "pageSize": 100, "business": "fission"}
             opt = {
                 "functionId": "superRedBagList",
                 "body": body,
@@ -168,7 +168,7 @@ class Cash100UserClass(UserClass):
     async def apCashWithDraw(self, item):
         success = False
         try:
-            body = {"linkId": "Wvzc_VpNTlSkiQdHT8r7QA", "businessSource": "NONE",
+            body = {"linkId": "c6Bkpjp7dYcvQwO9-PR7-g", "businessSource": "NONE",
                     "base": {"id": item['id'], "business": "fission", "poolBaseId": item['poolBaseId'],
                              "prizeGroupId": item['prizeGroupId'],
                              "prizeBaseId": item['prizeBaseId'], "prizeType": 4}}
@@ -214,7 +214,7 @@ class Cash100UserClass(UserClass):
     async def apRecompenseDrawPrize(self, item):
         try:
             body = {
-                "linkId": "Wvzc_VpNTlSkiQdHT8r7QA",
+                "linkId": "c6Bkpjp7dYcvQwO9-PR7-g",
                 "businessSource": "fission",
                 "drawRecordId": item['id'],
                 "business": "fission",
@@ -254,6 +254,7 @@ class Cash100UserClass(UserClass):
             code = res_data.get("code")
             msg = get_error_msg(res_data)
             if msg == "活动太火爆，请稍后重试~":
+                await wait(1)
                 continue
             if code != 0:
                 break
@@ -271,4 +272,4 @@ if __name__ == '__main__':
     task = TaskClass("task")
     task.name = 'Cash100'
     task.init_config(Cash100UserClass)
-    asyncio.run(task.main("抽现金赢大礼"))
+    asyncio.run(task.main("抽现金赢大礼-京东"))

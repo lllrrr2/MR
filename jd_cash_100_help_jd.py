@@ -1,6 +1,5 @@
 '''
-new Env('京东app版-邀好友抽现金-助力');
-cron: 6 6 6 6 6 python3 jd_cash_100_help.py
+new Env('京东app版—邀好友抽现金-助力');
 export RabbitToken="token值"
 
 '''
@@ -44,7 +43,7 @@ class Cash100UserClass(UserClass):
             if not await self.is_login():
                 self.printf("未登录")
                 return
-            body = {"linkId": "Wvzc_VpNTlSkiQdHT8r7QA", "isJdApp": True,
+            body = {"linkId": "c6Bkpjp7dYcvQwO9-PR7-g", "isJdApp": True,
                     "inviter": inviter.invite_code}
             opt = {
                 "functionId": "inviteFissionBeforeHome",
@@ -94,7 +93,7 @@ class Cash100UserClass(UserClass):
 
     async def inviteFissionHome(self):
         try:
-            body = {"linkId": "Wvzc_VpNTlSkiQdHT8r7QA", "inviter": "lgoudpmLcroNSzmdyMeyzL05ITAYtXoqcTLLVY7_anc"}
+            body = {"linkId": "c6Bkpjp7dYcvQwO9-PR7-g", "inviter": "lgoudpmLcroNSzmdyMeyzL05ITAYtXoqcTLLVY7_anc"}
             opt = {
                 "functionId": "inviteFissionHome",
                 "body": body,
@@ -122,7 +121,7 @@ class Cash100UserClass(UserClass):
 
     async def wheelsHome(self):
         try:
-            body = {"linkId": "Wvzc_VpNTlSkiQdHT8r7QA"}
+            body = {"linkId": "c6Bkpjp7dYcvQwO9-PR7-g"}
             opt = {
                 "functionId": "wheelsHome",
                 "body": body,
@@ -149,4 +148,4 @@ if __name__ == '__main__':
     task.name = 'Cash100_HELP'
     task.MAX_HELP_NUM = 200
     task.init_config(Cash100UserClass)
-    asyncio.run(task.main("抽现金赢大礼-京东-助力"))
+    asyncio.run(task.main("抽现金赢大礼-助力"))
