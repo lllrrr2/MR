@@ -50,7 +50,7 @@ class CKDRedUserClass(UserClass):
             "method": "post",
             "api": "client.action",
             "body_param": {
-                "appid": "signed_wh5",
+                "appid": "interaction_share",
                 "client": "wh5",
                 "clientVersion": "1.0.0",
                 "functionId": opt['functionId'],
@@ -126,7 +126,7 @@ class CKDRedUserClass(UserClass):
         try:
             opt = {
                 "functionId": "promote_getHomeData",
-                "appid": "signed_wh5"
+                "appid": "interaction_share"
             }
             status, result = await self.jd_api(await self.opt(opt))
             if result and result.get("code") == 0:
@@ -190,6 +190,9 @@ class CKDRedUserClass(UserClass):
     async def get_invite_code(self):
         await self.promote_pk_getMsgPopup()
         try:
+            if not await self.is_login():
+                self.printf("未登录")
+                return
             body = {}
             opt = {
                 "functionId": "promote_pk_getHomeData",
@@ -227,6 +230,9 @@ class CKDRedUserClass(UserClass):
 
     async def help(self, inviter):
         try:
+            if not await self.is_login():
+                self.printf("未登录")
+                return
             # await self.promote_getHomeData()
             if not self.can_help:
                 return
@@ -254,8 +260,10 @@ class CKDRedUserClass(UserClass):
                 if res_data['data'].get("bizCode") == 0:
                     inviter.help_num += 1
                     self.printf_help(f"助力成功", inviter)
+                    self.can_help = False
                 else:
                     msg = res_data['data'].get("bizMsg", "")
+                    self.can_help = False
                     if '未登录' in msg:
                         self.valid = False
                         self.can_help = False
@@ -268,6 +276,7 @@ class CKDRedUserClass(UserClass):
                     elif '助力已结束' in msg:
                         inviter.need_help = False
                     elif '足够的助力' in msg:
+                        self.can_help = True
                         inviter.need_help = False
                         inviter.promote_pk_getAmountForecast()
                         inviter.promote_pk_receiveAward()
