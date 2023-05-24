@@ -1,5 +1,5 @@
 '''
-new Env('全民拆快递-助力');
+new Env('全民拆快递助力');
 export RabbitToken="token值"
 
 变量:
@@ -169,4 +169,4 @@ if __name__ == '__main__':
     task.name = 'ZNS_HELP'
     task.need_appck = True
     task.init_config(CKDHelpUserClass)
-    asyncio.run(task.main("全民拆快递-助力"))
+    asyncio.run(task.main("炸年兽-助力"))

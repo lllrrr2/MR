@@ -48,6 +48,13 @@ class CKDRedUserClass(UserClass):
         # self.set_shshshfpb()
         _opt = {
             "method": "post",
+            "api": "client.action",
+            "body_param": {
+                "appid": "signed_wh5",
+                "client": "wh5",
+                "clientVersion": "1.0.0",
+                "functionId": opt['functionId'],
+            },
             "refresh_proxy_func": refresh_proxy_func
         }
         _opt.update(opt)
@@ -158,10 +165,10 @@ class CKDRedUserClass(UserClass):
                     redpacketInfo = awardInfo.get("redpacketInfo", {})
                     if couponInfo:
                         self.printf(
-                            f"抽到优惠券: {couponInfo['quota']} - {couponInfo['discount']}({couponInfo['limitStr']}),使用时间: {couponInfo['desc']}")
+                            f"抽到优惠券: {couponInfo['quota']} - {couponInfo['discount']}({couponInfo['limitStr']}),\t使用时间: {couponInfo['desc']}")
                     if redpacketInfo:
                         self.printf(
-                            f"抽到红包: {redpacketInfo['value']}元({redpacketInfo['name']}),使用时间: {redpacketInfo['desc']}")
+                            f"抽到红包: {redpacketInfo['value']}元({redpacketInfo['name']}),\t使用时间: {redpacketInfo['desc']}")
                 else:
                     msg = result['data']['bizMsg']
                     if "火爆" in msg:
@@ -171,7 +178,7 @@ class CKDRedUserClass(UserClass):
                     print_api_error(opt, status)
                     self.printf(f"[{self.Name}]\t{msg}")
             else:
-                msg = result['msg']
+                msg = get_error_msg(result)
                 if '登陆失败' in msg:
                     self.valid = False
                     self.can_help = False
@@ -281,6 +288,7 @@ class CKDRedUserClass(UserClass):
             opt = {
                 "functionId": "promote_pk_getHomeData",
                 "body": body,
+                "appId": "2a045",
                 "searchParams": self.searchParams({
                     "functionId": "promote_pk_getHomeData",
                     "body": json.dumps(body, separators=(",", ":"))
@@ -314,6 +322,6 @@ class CKDRedUserClass(UserClass):
 if __name__ == '__main__':
     task = TaskClass("invite")
     task.name = 'CKD_RED'
-    task.MAX_HELP_NUM = 200
+    task.MAX_HELP_NUM = 20
     task.init_config(CKDRedUserClass)
     asyncio.run(task.main("拆快递领红包"))

@@ -9,7 +9,6 @@ log剩余次数大于5000方可使用
 '''
 import asyncio
 import json
-from urllib.parse import quote
 
 from utils.common import UserClass, print_trace, print_api_error, printf, wait, randomWait, TaskClass
 
@@ -86,7 +85,7 @@ class ZnsUserClass(UserClass):
                     self.printf(f"{msg}")
             else:
                 msg = result['msg']
-                if '登陆失败' in msg:
+                if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
@@ -123,7 +122,7 @@ class ZnsUserClass(UserClass):
                     self.printf(f"{msg}")
             else:
                 msg = result.get('msg')
-                if '登陆失败' in msg:
+                if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
@@ -154,7 +153,7 @@ class ZnsUserClass(UserClass):
                     self.printf(f"{msg}")
             else:
                 msg = result['msg']
-                if '登陆失败' in msg:
+                if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
@@ -191,7 +190,7 @@ class ZnsUserClass(UserClass):
                     self.printf(f"{msg}")
             else:
                 msg = result['msg']
-                if '登陆失败' in msg:
+                if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
@@ -226,7 +225,7 @@ class ZnsUserClass(UserClass):
                     self.printf(msg)
             else:
                 msg = result['msg']
-                if '登陆失败' in msg:
+                if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
@@ -256,7 +255,7 @@ class ZnsUserClass(UserClass):
                     self.printf(msg)
             else:
                 msg = result['msg']
-                if '登陆失败' in msg:
+                if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
@@ -298,7 +297,7 @@ class ZnsUserClass(UserClass):
                     self.printf(msg)
             else:
                 msg = result['msg']
-                if '登陆失败' in msg:
+                if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
@@ -332,7 +331,7 @@ class ZnsUserClass(UserClass):
                     self.printf(msg)
             else:
                 msg = result['msg']
-                if '登陆失败' in msg:
+                if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
@@ -377,7 +376,7 @@ class ZnsUserClass(UserClass):
                     self.printf(msg)
             else:
                 msg = result['msg']
-                if '登陆失败' in msg:
+                if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
@@ -409,7 +408,7 @@ class ZnsUserClass(UserClass):
                     self.printf(f"{msg}")
             else:
                 msg = result['msg']
-                if '登陆失败' in msg:
+                if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
@@ -459,7 +458,84 @@ class ZnsUserClass(UserClass):
                     self.printf(f"{msg}")
             else:
                 msg = result['msg']
-                if '登陆失败' in msg:
+                if '登录' in msg:
+                    self.valid = False
+                    self.can_help = False
+                    self.need_help = False
+                self.printf(f"{msg}")
+        except:
+            print_trace()
+
+    async def promote_floating_layer(self, sceneId):
+        gradeList = []
+        try:
+            body = {"sceneId": sceneId}
+            opt = {
+                "functionId": "promote_floating_layer",
+                "body": body,
+                "log": True
+            }
+            status, result = await self.jd_api(await self.opt(opt))
+            if result and result.get("code") == 0:
+                if result.get("data") and result['data'].get('bizCode') == 0:
+                    self.raiseFlag = True
+                    gradeList = result["data"]["result"]["gradeList"]
+                else:
+                    msg = result['data']['bizMsg']
+                    if "火爆" in msg:
+                        self.black = True
+                    elif "环境异常" in msg:
+                        self.black = True
+                    print_api_error(opt, status)
+                    self.printf(f"{msg}")
+            else:
+                msg = result['msg']
+                if '登录' in msg:
+                    self.valid = False
+                    self.can_help = False
+                    self.need_help = False
+                self.printf(f"{msg}")
+        except:
+            print_trace()
+        return gradeList
+
+    async def promote_grade_award(self, gradeId):
+        try:
+            body = {"gradeId": gradeId}
+            opt = {
+                "functionId": "promote_grade_award",
+                "body": body,
+                "log": True
+            }
+            status, result = await self.jd_api(await self.opt(opt))
+            if result and result.get("code") == 0:
+                if result.get("data") and result['data'].get('bizCode') == 0:
+                    self.raiseFlag = True
+                    couponInfo = result["data"]["result"]["gradeAwardVo"].get("couponVO")
+                    redNum = result["data"]["result"]["gradeAwardVo"].get("redNum")
+                    type_ = result["data"]["result"]["gradeAwardVo"]["type"]
+                    # logger.info(res)
+                    if type_ in [1, 2, 4, 5]:
+                        if couponInfo:
+                            self.printf(
+                                f'奖励: 满{float(couponInfo["discount"])}-{float(couponInfo["quota"])}优惠券, 有效期:{couponInfo["desc"]}')
+                        if redNum:
+                            self.printf(f'奖励: {redNum}份红包')
+                    elif type_ == 0:
+                        self.printf("空气")
+                    else:
+                        printf(str(result))
+                else:
+                    msg = result['data']['bizMsg']
+                    if "火爆" in msg:
+                        self.black = True
+                    elif "环境异常" in msg:
+                        self.black = True
+                    print_api_error(opt, status)
+                    self.printf(f"{msg}")
+            else:
+                msg = result['msg']
+                if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
@@ -480,7 +556,7 @@ class ZnsUserClass(UserClass):
             return {}
 
     async def main(self):
-        self.printf("\n开始执行！")
+        self.printf("开始执行！")
         await self.promote_getHomeData()
         if self.black:
             return
@@ -515,12 +591,12 @@ class ZnsUserClass(UserClass):
         #     if not self.black:
         #         await self.promote_sign()
         #     await randomWait(1, 1)
-        #
-        # # 满级
-        # if self.fullFlag == True:
-        #     self.printf(f"已经满级，等待开奖！")
-        #     return
-        #
+
+        # 满级
+        if self.fullFlag == True:
+            self.printf(f"已经满级，等待开奖！")
+            return
+
         if not self.black:
             await self.promote_getTaskDetail(True)
 
@@ -680,7 +756,7 @@ class ZnsUserClass(UserClass):
                         await randomWait(3, 2)
                         self.toTaskFlag = False
 
-                elif '品牌墙' in oneTask['taskName']:
+                elif '品牌墙' in oneTask['taskName'] and oneTask['status'] == 3:
                     taskId = oneTask['taskId']
                     oneActivityInfo = oneTask['simpleRecordInfoVo']
                     if taskId and oneActivityInfo:
@@ -779,6 +855,16 @@ class ZnsUserClass(UserClass):
         #     await randomWait(3, 2)
 
         await self.promote_getHomeData()
+
+        self.printf("开始领取奖励")
+        self.raiseFlag = True
+        self.homeMainInfo = self.homeData['result']['homeMainInfo']
+        self.printf("开始领取奖励")
+        for sceneId in range(2004, 2024):
+            gradeList = await self.promote_floating_layer(str(sceneId))
+            for grade in gradeList:
+                if grade["status"] == 1:
+                    await self.promote_grade_award(grade['id'])
 
         # if self.homeData['result']:
         #     printf("")
