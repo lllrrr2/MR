@@ -1,5 +1,6 @@
 '''
 new Env('京东app版—邀好友抽现金');
+cron: 6 6 6 6 6 python3 jd_cash_100_jd.py
 export RabbitToken="token值"
 
 '''
