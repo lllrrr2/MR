@@ -1,5 +1,5 @@
 '''
-new Env('全民拆快递助力');
+new Env('全民拆快递-助力');
 export RabbitToken="token值"
 
 变量:
@@ -73,6 +73,9 @@ class CKDHelpUserClass(UserClass):
 
     async def get_invite_code(self):
         try:
+            if not await self.is_login():
+                self.printf("未登录")
+                return
             body = {}
             opt = {
                 "functionId": "promote_getTaskDetail",
@@ -118,6 +121,9 @@ class CKDHelpUserClass(UserClass):
 
     async def help(self, inviter):
         try:
+            if not await self.is_login():
+                self.printf("未登录")
+                return
             if not inviter.need_help:
                 return
             if inviter.help_num >= inviter.MAX_HELP_NUM:
@@ -166,7 +172,7 @@ class CKDHelpUserClass(UserClass):
 if __name__ == '__main__':
     task = TaskClass("invite")
     task.MAX_HELP_NUM = 8
-    task.name = 'ZNS_HELP'
+    task.name = 'CKD_HELP'
     task.need_appck = True
     task.init_config(CKDHelpUserClass)
-    asyncio.run(task.main("炸年兽-助力"))
+    asyncio.run(task.main("全民拆快递-助力"))
