@@ -10,7 +10,7 @@ log剩余次数大于5000方可使用
 import asyncio
 import json
 
-from utils.common import UserClass, print_trace, print_api_error, printf, wait, randomWait, TaskClass
+from utils.common import UserClass, print_trace, print_api_error, printf, wait, randomWait, TaskClass, get_error_msg
 
 
 class ZnsUserClass(UserClass):
@@ -44,7 +44,6 @@ class ZnsUserClass(UserClass):
                 "client": "wh5",
                 "clientVersion": "1.0.0",
                 "functionId": opt['functionId'],
-                "x-api-eid-token": "jdd03VMQVAGH3ZQWD5EP26AFGOSHO2JGIN5QWMR477BRTAPRE3Q6RAPCHR6U7WUH4KCZIHQVWNHLPTCW6LXZ3C4URL24UYIAAAAMII7NHTVQAAAAACR3T433KGEJQ44X"
             }
         }
         _opt.update(opt)
@@ -84,13 +83,17 @@ class ZnsUserClass(UserClass):
                     print_api_error(opt, status)
                     self.printf(f"{msg}")
             else:
-                msg = result['msg']
+                msg = get_error_msg(result)
                 if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
+                elif "环境异常" in msg:
+                    self.valid = False
+                    self.can_help = False
+                    self.need_help = False
                     self.black = True
-                self.printf(f"{msg}")
+                self.printf(msg)
         except:
             print_trace()
 
@@ -121,12 +124,17 @@ class ZnsUserClass(UserClass):
                     print_api_error(opt, status)
                     self.printf(f"{msg}")
             else:
-                msg = result.get('msg')
+                msg = get_error_msg(result)
                 if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
-                self.printf(f"{msg}")
+                elif "环境异常" in msg:
+                    self.valid = False
+                    self.can_help = False
+                    self.need_help = False
+                    self.black = True
+                self.printf(msg)
         except:
             print_trace()
 
@@ -152,12 +160,17 @@ class ZnsUserClass(UserClass):
                     print_api_error(opt, status)
                     self.printf(f"{msg}")
             else:
-                msg = result['msg']
+                msg = get_error_msg(result)
                 if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
-                self.printf(f"{msg}")
+                elif "环境异常" in msg:
+                    self.valid = False
+                    self.can_help = False
+                    self.need_help = False
+                    self.black = True
+                self.printf(msg)
         except:
             print_trace()
 
@@ -189,12 +202,17 @@ class ZnsUserClass(UserClass):
                     self.printf(f"签到失败")
                     self.printf(f"{msg}")
             else:
-                msg = result['msg']
+                msg = get_error_msg(result)
                 if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
-                self.printf(f"{msg}")
+                elif "环境异常" in msg:
+                    self.valid = False
+                    self.can_help = False
+                    self.need_help = False
+                    self.black = True
+                self.printf(msg)
         except:
             print_trace()
 
@@ -224,11 +242,16 @@ class ZnsUserClass(UserClass):
                     print_api_error(opt, status)
                     self.printf(msg)
             else:
-                msg = result['msg']
+                msg = get_error_msg(result)
                 if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
+                elif "环境异常" in msg:
+                    self.valid = False
+                    self.can_help = False
+                    self.need_help = False
+                    self.black = True
                 self.printf(msg)
         except:
             print_trace()
@@ -254,11 +277,16 @@ class ZnsUserClass(UserClass):
                     print_api_error(opt, status)
                     self.printf(msg)
             else:
-                msg = result['msg']
+                msg = get_error_msg(result)
                 if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
+                elif "环境异常" in msg:
+                    self.valid = False
+                    self.can_help = False
+                    self.need_help = False
+                    self.black = True
                 self.printf(msg)
         except:
             print_trace()
@@ -296,11 +324,16 @@ class ZnsUserClass(UserClass):
                     print_api_error(opt, status)
                     self.printf(msg)
             else:
-                msg = result['msg']
+                msg = get_error_msg(result)
                 if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
+                elif "环境异常" in msg:
+                    self.valid = False
+                    self.can_help = False
+                    self.need_help = False
+                    self.black = True
                 self.printf(msg)
         except:
             print_trace()
@@ -330,11 +363,16 @@ class ZnsUserClass(UserClass):
                     print_api_error(opt, status)
                     self.printf(msg)
             else:
-                msg = result['msg']
+                msg = get_error_msg(result)
                 if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
+                elif "环境异常" in msg:
+                    self.valid = False
+                    self.can_help = False
+                    self.need_help = False
+                    self.black = True
                 self.printf(msg)
         except:
             print_trace()
@@ -375,11 +413,16 @@ class ZnsUserClass(UserClass):
                         self.black = True
                     self.printf(msg)
             else:
-                msg = result['msg']
+                msg = get_error_msg(result)
                 if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
+                elif "环境异常" in msg:
+                    self.valid = False
+                    self.can_help = False
+                    self.need_help = False
+                    self.black = True
                 self.printf(msg)
         except:
             print_trace()
@@ -407,12 +450,17 @@ class ZnsUserClass(UserClass):
                         self.black = True
                     self.printf(f"{msg}")
             else:
-                msg = result['msg']
+                msg = get_error_msg(result)
                 if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
-                self.printf(f"{msg}")
+                elif "环境异常" in msg:
+                    self.valid = False
+                    self.can_help = False
+                    self.need_help = False
+                    self.black = True
+                self.printf(msg)
         except:
             print_trace()
 
@@ -457,12 +505,17 @@ class ZnsUserClass(UserClass):
                     print_api_error(opt, status)
                     self.printf(f"{msg}")
             else:
-                msg = result['msg']
+                msg = get_error_msg(result)
                 if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
-                self.printf(f"{msg}")
+                elif "环境异常" in msg:
+                    self.valid = False
+                    self.can_help = False
+                    self.need_help = False
+                    self.black = True
+                self.printf(msg)
         except:
             print_trace()
 
@@ -489,12 +542,17 @@ class ZnsUserClass(UserClass):
                     print_api_error(opt, status)
                     self.printf(f"{msg}")
             else:
-                msg = result['msg']
+                msg = get_error_msg(result)
                 if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
-                self.printf(f"{msg}")
+                elif "环境异常" in msg:
+                    self.valid = False
+                    self.can_help = False
+                    self.need_help = False
+                    self.black = True
+                self.printf(msg)
         except:
             print_trace()
         return gradeList
@@ -534,12 +592,17 @@ class ZnsUserClass(UserClass):
                     print_api_error(opt, status)
                     self.printf(f"{msg}")
             else:
-                msg = result['msg']
+                msg = get_error_msg(result)
                 if '登录' in msg:
                     self.valid = False
                     self.can_help = False
                     self.need_help = False
-                self.printf(f"{msg}")
+                elif "环境异常" in msg:
+                    self.valid = False
+                    self.can_help = False
+                    self.need_help = False
+                    self.black = True
+                self.printf(msg)
         except:
             print_trace()
 
@@ -557,6 +620,9 @@ class ZnsUserClass(UserClass):
 
     async def main(self):
         self.printf("开始执行！")
+        if not await self.is_login():
+            self.printf("未登录")
+            return
         await self.promote_getHomeData()
         if self.black:
             return
@@ -619,7 +685,11 @@ class ZnsUserClass(UserClass):
             printf("")
             self.printf(f"开始第{toTaskCount}轮任务")
             self.toTaskFlag = True
+            if self.black:
+                break
             for i in range(len(self.taskList)):
+                if self.black:
+                    break
                 oneTask = self.taskList[i]
                 if oneTask["taskType"] in [5] and oneTask['status'] == 1 and "种草" in oneTask['taskName']:
                     self.printf(f"做任务:\t{oneTask['taskName']}")
@@ -656,6 +726,8 @@ class ZnsUserClass(UserClass):
                         activityInfoList = []
                     times = oneTask.get('times', 0)
                     for j in range(len(activityInfoList)):
+                        if self.black:
+                            break
                         times += 1
                         oneActivityInfo = activityInfoList[j]
                         if oneActivityInfo['status'] != 1 or not oneActivityInfo.get("taskToken"):
@@ -779,6 +851,9 @@ class ZnsUserClass(UserClass):
             if self.toTaskFlag:
                 self.printf(f"任务都做完了")
                 break
+        
+        if self.black:
+            return
 
         ## 微信任务
         self.taskList = []
@@ -854,17 +929,18 @@ class ZnsUserClass(UserClass):
         #         await self.promote_getWelfareScore()
         #     await randomWait(3, 2)
 
+        if self.black:
+            return
         await self.promote_getHomeData()
 
-        # self.printf("开始领取奖励")
-        # self.raiseFlag = True
-        # self.homeMainInfo = self.homeData['result']['homeMainInfo']
-        # self.printf("开始领取奖励")
-        # for sceneId in range(2004, 2024):
-        #     gradeList = await self.promote_floating_layer(str(sceneId))
-        #     for grade in gradeList:
-        #         if grade["status"] == 1:
-        #             await self.promote_grade_award(grade['id'])
+        self.raiseFlag = True
+        self.homeMainInfo = self.homeData['result']['homeMainInfo']
+        self.printf("开始领取奖励")
+        for sceneId in range(2004, 2024):
+            gradeList = await self.promote_floating_layer(str(sceneId))
+            for grade in gradeList:
+                if grade["status"] == 1:
+                    await self.promote_grade_award(grade['id'])
 
         # if self.homeData['result']:
         #     printf("")
