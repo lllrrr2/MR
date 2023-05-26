@@ -34,16 +34,16 @@ class ZnsUserClass(UserClass):
 
     async def opt(self, opt):
         await self.set_joyytoken()
-        # self.set_shshshfpb()
+        # await self.set_shshshfpb()
         _opt = {
             "method": "post",
             "log": False,
-            "api": "client.action",
             "body_param": {
                 "appid": "signed_wh5",
-                "client": "wh5",
-                "clientVersion": "1.0.0",
+                "client": "apple",
+                "clientVersion": "11.4.0",
                 "functionId": opt['functionId'],
+                # "x-api-eid-token": "jdd037WEF4XJGQ4YQXW6MWBUSBM5NGIEG6FE5TBLQL2HP4BMMHCPJDFGEMCAM24V72YOK5HYD4BRKTJVDISVB4IOOFXPNHMAAAAMIK7WSURYAAAAADFKZ23YLLHW3MIX",
             }
         }
         _opt.update(opt)
@@ -389,7 +389,7 @@ class ZnsUserClass(UserClass):
                     "functionId": "promote_collectScore",
                     "body": json.dumps(body, separators=(",", ":"))
                 }),
-                "h5st": True,
+                # "h5st": True,
                 "log": True
             }
             status, result = await self.jd_api(await self.opt(opt))
@@ -816,8 +816,8 @@ class ZnsUserClass(UserClass):
                         await randomWait(3, 2)
                         self.toTaskFlag = False
 
-                elif oneTask['status'] == 3 or '去首页' in oneTask['taskName'] or '打卡' in oneTask[
-                    'taskName'] or '去APP' in oneTask['taskName']:
+                elif oneTask['status'] == 3 and ( '去首页' in oneTask['taskName'] or '打卡' in oneTask[
+                    'taskName'] or '去APP' in oneTask['taskName']):
                     taskId = oneTask['taskId']
                     oneActivityInfo = oneTask['simpleRecordInfoVo']
                     if taskId and oneActivityInfo:
@@ -851,7 +851,7 @@ class ZnsUserClass(UserClass):
             if self.toTaskFlag:
                 self.printf(f"任务都做完了")
                 break
-        
+
         if self.black:
             return
 
