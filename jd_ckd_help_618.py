@@ -107,14 +107,14 @@ class CKDHelpUserClass(UserClass):
                         self.can_help = False
                     elif '邀请过' in msg:
                         pass
-                    elif '好友人气爆棚了' in msg:
+                    elif '好友人气爆棚' in msg:
                         self.can_help = False
                     elif msg == "success":
                         self.need_help = False
                         self.printf("助力已满")
                         return
                     print_api_error(opt, status)
-                    print(result)
+                    self.printf(result)
             else:
                 msg = result['msg']
                 if '登陆失败' in msg:
@@ -147,7 +147,7 @@ class CKDHelpUserClass(UserClass):
                     "functionId": "promote_collectScore",
                     "body": json.dumps(body, separators=(",", ":"))
                 }),
-                "h5st": True,
+                # "h5st": True,
                 "log": True
             }
             status, res_data = await self.jd_api(await self.opt(opt))
@@ -155,7 +155,7 @@ class CKDHelpUserClass(UserClass):
             if code == 0:
                 if res_data['data'].get("bizCode") == 0:
                     inviter.help_num += 1
-                    self.printf(f"助力[{inviter.Name}]成功({inviter.help_num}/{inviter.MAX_HELP_NUM})")
+                    self.printf_help(f"助力成功", inviter)
                 else:
                     msg = res_data['data'].get("bizMsg", "")
                     if '未登录' in msg:
@@ -168,15 +168,15 @@ class CKDHelpUserClass(UserClass):
                         self.error += 1
                     elif '邀请过' in msg:
                         pass
-                    elif '好友人气爆棚了' in msg:
+                    elif '好友人气爆棚' in msg:
                         inviter.need_help = False
-                    self.printf(f"助力失败[{code}]: {msg}")
+                    self.printf_help(f"助力失败[{code}]: {msg}", inviter)
             else:
                 msg = res_data['msg']
                 if '登陆失败' in msg:
                     self.valid = False
                     self.can_help = False
-                self.printf(f"{msg}")
+                self.printf_help(f"助力失败[{code}]: {msg}", inviter)
         except:
             print_trace()
 
