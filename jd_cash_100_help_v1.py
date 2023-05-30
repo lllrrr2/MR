@@ -1,6 +1,6 @@
 """
 new Env('邀好友抽现金-助力-v1');
-cron: 6 6 6 6 6 python3 jd_cash_100_help.py
+cron: 6 6 6 6 6 python3 jd_cash_100_help_v1.py
 export RabbitToken="token值"
 
 """
