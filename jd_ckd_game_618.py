@@ -42,12 +42,12 @@ class CKDGameUserClass(UserClass):
         _opt = {
             "method": "post",
             "log": False,
-            "api": "client.action",
             "body_param": {
                 "appid": "signed_wh5",
-                "client": "wh5",
-                "clientVersion": "1.0.0",
+                "client": "apple",
+                "clientVersion": "11.4.0",
                 "functionId": opt['functionId'],
+                "joylog": "",
             }
         }
         _opt.update(opt)
@@ -60,7 +60,7 @@ class CKDGameUserClass(UserClass):
 
     def searchParams(self, searchParams):
         _searchParams = {
-            "client": "iOS",
+            "client": "apple",
             "clientVersion": "11.4.0",
             "appid": "signed_wh5",
         }
@@ -96,7 +96,7 @@ class CKDGameUserClass(UserClass):
         except:
             print_trace()
 
-    async def promote_pointplay_award(self, actId):
+    async def promote_pointplay_award(self, actId) -> None:
         try:
             body = {
                 "actId": actId,

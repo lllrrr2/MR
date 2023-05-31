@@ -25,12 +25,14 @@ class ZnsUserClass(UserClass):
         self.homeMainInfo = {}
         self.raiseInfo = {}
         self.signHomeData = {}
+        self.H5ST_VERSION = "4_1"
         self.taskList = []
         self.lotteryTaskVos = []
         self.fullFlag = False
         self.toTaskFlag = False
         self.Origin = "https://wbbny.m.jd.com"
         self.referer = "https://wbbny.m.jd.com/"
+        self.ua = self.ep_UA
 
     async def opt(self, opt):
         await self.set_joyytoken()
@@ -43,7 +45,8 @@ class ZnsUserClass(UserClass):
                 "client": "apple",
                 "clientVersion": "11.4.0",
                 "functionId": opt['functionId'],
-                # "x-api-eid-token": "jdd037WEF4XJGQ4YQXW6MWBUSBM5NGIEG6FE5TBLQL2HP4BMMHCPJDFGEMCAM24V72YOK5HYD4BRKTJVDISVB4IOOFXPNHMAAAAMIK7WSURYAAAAADFKZ23YLLHW3MIX",
+                "joylog": "",
+                "x-api-eid-token": "jdd03IN2XOC2C5NYJOJ64TLTMRUMHP4R5J6SJEK64Z2O6LHNHVZI72EDE45W3Y6ZYJA2TUKA5FSRNO2SDBP7LB62MOKKFWMAAAAMIN6CL5XYAAAAACRNYIUMJJO25MEX",
             }
         }
         _opt.update(opt)
@@ -56,7 +59,7 @@ class ZnsUserClass(UserClass):
 
     def searchParams(self, searchParams):
         _searchParams = {
-            "client": "iOS",
+            "client": "apple",
             "clientVersion": "11.4.0",
             "appid": "signed_wh5",
         }
@@ -65,8 +68,17 @@ class ZnsUserClass(UserClass):
 
     async def promote_getHomeData(self):
         try:
+            body = {}
             opt = {
-                "functionId": "promote_getHomeData"
+                "functionId": "promote_getHomeData",
+                "body": body,
+                "appId": "2a045",
+                "searchParams": self.searchParams({
+                    "functionId": "promote_getHomeData",
+                    "body": json.dumps(body, separators=(",", ":"))
+                }),
+                "h5st": True,
+                # "log": True
             }
             status, result = await self.jd_api(await self.opt(opt))
             if result and result.get("code") == 0:
@@ -109,7 +121,7 @@ class ZnsUserClass(UserClass):
                     "body": json.dumps(body, separators=(",", ":"))
                 }),
                 "h5st": True,
-                "log": True
+                # "log": True
             }
             status, result = await self.jd_api(await self.opt(opt))
             if result and result.get("code") == 0:
@@ -180,7 +192,7 @@ class ZnsUserClass(UserClass):
             opt = {
                 "functionId": "promote_sign",
                 "body": body,
-                "log": True
+                # "log": True
             }
             status, result = await self.jd_api(await self.opt(opt))
             if result and result.get("code") == 0:
@@ -389,7 +401,7 @@ class ZnsUserClass(UserClass):
                     "functionId": "promote_collectScore",
                     "body": json.dumps(body, separators=(",", ":"))
                 }),
-                # "h5st": True,
+                "h5st": True,
                 "log": True
             }
             status, result = await self.jd_api(await self.opt(opt))
@@ -816,7 +828,7 @@ class ZnsUserClass(UserClass):
                         await randomWait(3, 2)
                         self.toTaskFlag = False
 
-                elif oneTask['status'] == 3 and ( '去首页' in oneTask['taskName'] or '打卡' in oneTask[
+                elif oneTask['status'] == 3 and ('去首页' in oneTask['taskName'] or '打卡' in oneTask[
                     'taskName'] or '去APP' in oneTask['taskName']):
                     taskId = oneTask['taskId']
                     oneActivityInfo = oneTask['simpleRecordInfoVo']

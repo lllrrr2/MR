@@ -40,6 +40,7 @@ class CKDRedUserClass(UserClass):
         self.appname = "50180"
         self._help_num = None
         self.secretp = ''
+        self.H5ST_VERSION = "4_1"
         self.Origin = "https://wbbny.m.jd.com"
         self.referer = "https://wbbny.m.jd.com/"
 
@@ -48,12 +49,13 @@ class CKDRedUserClass(UserClass):
         # self.set_shshshfpb()
         _opt = {
             "method": "post",
-            "api": "client.action",
+            "log": False,
             "body_param": {
-                "appid": "interaction_share",
-                "client": "wh5",
-                "clientVersion": "1.0.0",
+                "appid": "signed_wh5",
+                "client": "apple",
+                "clientVersion": "11.4.0",
                 "functionId": opt['functionId'],
+                "joylog": "",
             },
             "refresh_proxy_func": refresh_proxy_func
         }
@@ -67,7 +69,7 @@ class CKDRedUserClass(UserClass):
 
     def searchParams(self, searchParams):
         _searchParams = {
-            "client": "iOS",
+            "client": "apple",
             "clientVersion": "11.4.0",
             "appid": "interaction_share",
         }

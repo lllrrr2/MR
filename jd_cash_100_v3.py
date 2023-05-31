@@ -28,19 +28,20 @@ class Cash100UserClass(UserClass):
         self.H5ST_VERSION = "4_1"
         self.invite_code = ''
         self.draw_num = 0
+        self.ua = self.ep_UA
 
     async def opt(self, opt):
         _opt = {
             "method": "get",
-            "api": "",
+            "api": "api",
         }
         _opt.update(opt)
         return _opt
 
     def searchParams(self, searchParams):
         _searchParams = {
-            "client": "iOS",
-            "clientVersion": "10.0.4",
+            "client": "apple",
+            "clientVersion": "11.4.0",
             "appid": "activities_platform",
         }
         _searchParams.update(searchParams)

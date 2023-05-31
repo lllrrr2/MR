@@ -20,6 +20,7 @@ class CKDHelpUserClass(UserClass):
         self.appname = "50180"
         self._help_num = None
         self._error = 0
+        self.H5ST_VERSION = "4_1"
         self.Origin = "https://wbbny.m.jd.com"
         self.referer = "https://wbbny.m.jd.com/"
 
@@ -41,12 +42,12 @@ class CKDHelpUserClass(UserClass):
         _opt = {
             "method": "post",
             "log": False,
-            "api": "client.action",
             "body_param": {
                 "appid": "signed_wh5",
-                "client": "wh5",
-                "clientVersion": "1.0.0",
+                "client": "apple",
+                "clientVersion": "11.4.0",
                 "functionId": opt['functionId'],
+                "joylog": "",
             }
         }
         _opt.update(opt)
@@ -59,7 +60,7 @@ class CKDHelpUserClass(UserClass):
 
     def searchParams(self, searchParams):
         _searchParams = {
-            "client": "iOS",
+            "client": "apple",
             "clientVersion": "11.4.0",
             "appid": "signed_wh5",
         }
@@ -147,7 +148,7 @@ class CKDHelpUserClass(UserClass):
                     "functionId": "promote_collectScore",
                     "body": json.dumps(body, separators=(",", ":"))
                 }),
-                # "h5st": True,
+                "h5st": True,
                 "log": True
             }
             status, res_data = await self.jd_api(await self.opt(opt))
