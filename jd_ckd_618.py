@@ -46,7 +46,7 @@ class ZnsUserClass(UserClass):
                 "clientVersion": "11.4.0",
                 "functionId": opt['functionId'],
                 "joylog": "",
-                "x-api-eid-token": "jdd03IN2XOC2C5NYJOJ64TLTMRUMHP4R5J6SJEK64Z2O6LHNHVZI72EDE45W3Y6ZYJA2TUKA5FSRNO2SDBP7LB62MOKKFWMAAAAMIN6CL5XYAAAAACRNYIUMJJO25MEX",
+                # "x-api-eid-token": "jdd03IN2XOC2C5NYJOJ64TLTMRUMHP4R5J6SJEK64Z2O6LHNHVZI72EDE45W3Y6ZYJA2TUKA5FSRNO2SDBP7LB62MOKKFWMAAAAMIN6CL5XYAAAAACRNYIUMJJO25MEX",
             }
         }
         _opt.update(opt)
