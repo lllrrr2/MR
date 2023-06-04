@@ -23,6 +23,7 @@ class CKDHelpUserClass(UserClass):
         self.H5ST_VERSION = "4_1"
         self.Origin = "https://wbbny.m.jd.com"
         self.referer = "https://wbbny.m.jd.com/"
+        self.ua = self.ep_UA
 
     @property
     def error(self):

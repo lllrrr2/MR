@@ -23,18 +23,7 @@ class CKDGameUserClass(UserClass):
         self._error = 0
         self.Origin = "https://wbbny.m.jd.com"
         self.referer = "https://wbbny.m.jd.com/"
-
-    @property
-    def error(self):
-        return self._error
-
-    @error.setter
-    def error(self, value):
-        self._error = value
-        if self._error >= 3:
-            self.black = True
-            self.need_help = False
-            self.can_help = False
+        self.ua = self.ep_UA
 
     async def opt(self, opt):
         await self.set_joyytoken()
@@ -76,6 +65,13 @@ class CKDGameUserClass(UserClass):
             opt = {
                 "functionId": "promote_pointplay",
                 "body": body,
+                "appId": "2a045",
+                "searchParams": self.searchParams({
+                    "functionId": "promote_pointplay",
+                    "body": json.dumps(body, separators=(",", ":"))
+                }),
+                "h5st": True,
+                "log": True
             }
             status, result = await self.jd_api(await self.opt(opt))
             if result and result.get("code") == 0:
@@ -106,7 +102,7 @@ class CKDGameUserClass(UserClass):
                 "body": body,
                 "appId": "2a045",
                 "searchParams": self.searchParams({
-                    "functionId": "promote_collectScore",
+                    "functionId": "promote_pointplay_award",
                     "body": json.dumps(body, separators=(",", ":"))
                 }),
                 "h5st": True,
