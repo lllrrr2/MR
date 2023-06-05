@@ -36,6 +36,7 @@ class ZnsUserClass(UserClass):
 
     async def opt(self, opt):
         await self.set_joyytoken()
+        await self.set_joyytokenb()
         # await self.set_shshshfpb()
         _opt = {
             "method": "post",
