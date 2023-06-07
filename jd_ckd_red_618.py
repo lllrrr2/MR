@@ -279,10 +279,9 @@ class CKDRedUserClass(UserClass):
                         pass
                     elif '助力已结束' in msg:
                         inviter.need_help = False
-                    elif '足够的助力' in msg:
+                    elif '好友人气爆棚' in msg:
                         self.can_help = True
                         inviter.need_help = False
-                        inviter.promote_pk_getAmountForecast()
                         inviter.promote_pk_receiveAward()
                     self.printf_help(f"助力失败[{code}]: {msg}", inviter)
             else:
