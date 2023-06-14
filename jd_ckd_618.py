@@ -35,6 +35,7 @@ class ZnsUserClass(UserClass):
         self.ua = self.ep_UA
 
     async def opt(self, opt):
+        await self.set_shshshfpb()
         await self.set_joyytoken()
         await self.set_joyytokenb()
         # await self.set_shshshfpb()
@@ -44,7 +45,7 @@ class ZnsUserClass(UserClass):
             "body_param": {
                 "appid": "signed_wh5",
                 "client": "apple",
-                "clientVersion": "11.4.0",
+                "clientVersion": "10.1.4",
                 "functionId": opt['functionId'],
                 "joylog": "",
                 # "x-api-eid-token": "jdd03IN2XOC2C5NYJOJ64TLTMRUMHP4R5J6SJEK64Z2O6LHNHVZI72EDE45W3Y6ZYJA2TUKA5FSRNO2SDBP7LB62MOKKFWMAAAAMIN6CL5XYAAAAACRNYIUMJJO25MEX",
@@ -61,7 +62,7 @@ class ZnsUserClass(UserClass):
     def searchParams(self, searchParams):
         _searchParams = {
             "client": "apple",
-            "clientVersion": "11.4.0",
+            "clientVersion": "10.1.4",
             "appid": "signed_wh5",
         }
         _searchParams.update(searchParams)

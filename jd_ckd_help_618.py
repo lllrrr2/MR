@@ -38,6 +38,7 @@ class CKDHelpUserClass(UserClass):
             self.can_help = False
 
     async def opt(self, opt):
+        await self.set_shshshfpb()
         await self.set_joyytoken()
         await self.set_joyytokenb()
         # self.set_shshshfpb()
@@ -47,7 +48,7 @@ class CKDHelpUserClass(UserClass):
             "body_param": {
                 "appid": "signed_wh5",
                 "client": "apple",
-                "clientVersion": "11.4.0",
+                "clientVersion": "10.1.4",
                 "functionId": opt['functionId'],
                 "joylog": "",
             }
@@ -63,7 +64,7 @@ class CKDHelpUserClass(UserClass):
     def searchParams(self, searchParams):
         _searchParams = {
             "client": "apple",
-            "clientVersion": "11.4.0",
+            "clientVersion": "10.1.4",
             "appid": "signed_wh5",
         }
         _searchParams.update(searchParams)
