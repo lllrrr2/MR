@@ -41,7 +41,7 @@ class Cash100UserClass(UserClass):
     def searchParams(self, searchParams):
         _searchParams = {
             "client": "apple",
-            "clientVersion": "10.1.4",
+            "clientVersion": "11.4.0",
             "appid": "activities_platform",
         }
         _searchParams.update(searchParams)
@@ -261,6 +261,7 @@ class Cash100UserClass(UserClass):
                 self.printf("等待3s重试")
                 await wait(3)
                 continue
+            await wait(1)
             if code != 0:
                 break
         pageNum = 1

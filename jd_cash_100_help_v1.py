@@ -70,14 +70,21 @@ class Cash100UserClass(UserClass):
                         self.printf_help(f"----->  {inviter.Name}:\t助力成功", inviter)
                     elif helpResult == 6:
                         self.printf_help(f"----->  {inviter.Name}:\t助力过了", inviter)
+                    elif helpResult == 2:
+                        self.printf_help(f"----->  {inviter.Name}:\t活动太火爆", inviter)
+                    elif helpResult == 3:
+                        self.printf_help(f"----->  {inviter.Name}:\t没有助力次数了", inviter)
                     elif helpResult is None:
                         self.printf_help(f"----->  {inviter.Name}:\t助力失败：{str(res_data)}", inviter)
                     else:
                         self.printf_help(f"----->  {inviter.Name}:\t未知助力结果[{data.get('helpResult')}]：{str(res_data)}", inviter)
                 else:
                     self.printf_help(f"----->  {inviter.Name}:\t助力失败[{status}]：{str(res_data)}", inviter)
+            elif status == 403:
+                msg = 'ip已黑'
+                self.printf_help(f"----->  {inviter.Name}:\t助力失败：{msg}", inviter)
             else:
-                msg = res_data.get("errMsg", "")
+                msg = get_error_msg(res_data)
                 if "火爆" in msg:
                     self.can_help = False
                 self.printf_help(f"----->  {inviter.Name}:\t助力失败：{msg}", inviter)
@@ -151,6 +158,6 @@ class Cash100UserClass(UserClass):
 if __name__ == '__main__':
     task = TaskClass("help")
     task.name = 'Cash100_V1_HELP'
-    task.MAX_HELP_NUM = 20000
+    task.MAX_HELP_NUM = 400
     task.init_config(Cash100UserClass)
     asyncio.run(task.main("邀好友抽现金-助力-v1"))
