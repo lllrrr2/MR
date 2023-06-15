@@ -156,7 +156,7 @@ class Cash100UserClass(UserClass):
 
 
 if __name__ == '__main__':
-    task = TaskClass("help")
+    task = TaskClass("invite")
     task.name = 'Cash100_V1_HELP'
     task.MAX_HELP_NUM = 400
     task.init_config(Cash100UserClass)
