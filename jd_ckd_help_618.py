@@ -48,7 +48,7 @@ class CKDHelpUserClass(UserClass):
             "body_param": {
                 "appid": "signed_wh5",
                 "client": "apple",
-                "clientVersion": "10.1.4",
+                "clientVersion": "11.4.0",
                 "functionId": opt['functionId'],
                 "joylog": "",
             }
