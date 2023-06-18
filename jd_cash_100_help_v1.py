@@ -35,7 +35,7 @@ class Cash100UserClass(UserClass):
     def searchParams(self, searchParams):
         _searchParams = {
             "client": "apple",
-            "clientVersion": "10.1.4",
+            "clientVersion": "11.4.0",
             "appid": "activities_platform",
         }
         _searchParams.update(searchParams)
