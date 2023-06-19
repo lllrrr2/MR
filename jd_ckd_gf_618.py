@@ -25,6 +25,7 @@ class CKDGFUserClass(UserClass):
         self.Origin = "https://wbbny.m.jd.com"
         self.referer = "https://wbbny.m.jd.com/"
         self.ua = self.ep_UA
+        self.homeData = {}
 
     async def opt(self, opt):
         # await self.set_shshshfpb()
@@ -64,7 +65,7 @@ class CKDGFUserClass(UserClass):
         # await self.promote_mainDivideRedPacket()
         await self.promote_getHomeData()
         if not self.homeData or not self.homeData.get('raiseInfo'):
-            return 
+            return
         raiseInfo = self.homeData['raiseInfo']
         fullFlag = raiseInfo.get('fullFlag', False)
         if not fullFlag:
