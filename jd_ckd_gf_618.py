@@ -1,6 +1,6 @@
 '''
 new Env('全民拆快递-瓜分-2023');
-cron 0 20 * * * python jd_ckd_game_618.py
+cron 0 20 * * * python jd_ckd_gf_618.py
 export RabbitToken="token值"
 
 变量:
