@@ -63,6 +63,8 @@ class CKDGFUserClass(UserClass):
     async def main(self):
         # await self.promote_mainDivideRedPacket()
         await self.promote_getHomeData()
+        if not self.homeData or not self.homeData.get('raiseInfo'):
+            return 
         raiseInfo = self.homeData['raiseInfo']
         fullFlag = raiseInfo.get('fullFlag', False)
         if not fullFlag:
