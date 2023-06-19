@@ -1,6 +1,6 @@
 '''
-new Env('拼手速拆快递-游戏');
-cron 0 8,12,17,20 * * * python jd_ckd_game_618.py
+new Env('全民拆快递-瓜分-2023');
+cron 0 20 * * * python jd_ckd_game_618.py
 export RabbitToken="token值"
 
 变量:
