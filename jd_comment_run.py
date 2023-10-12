@@ -6,7 +6,7 @@ export RabbitToken="token值"
 
 import asyncio
 
-from jd_comment import JDComment
+from utils.jd_comment import JDComment
 from utils.common import TaskClass
 
 if __name__ == '__main__':
