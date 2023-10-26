@@ -52,18 +52,18 @@ class Cash100UserClass(UserClass):
                     "inviter": inviter.invite_code}
             opt = {
                 "method": "get",
-                "functionId": "inviteFissionBeforeHome",
+                "functionId": "inviteFissionHelp",
                 "body": body,
-                "appId": "02f8d",
+                "appId": "c5389",
                 "searchParams": self.searchParams({
-                    "functionId": "inviteFissionBeforeHome",
+                    "functionId": "inviteFissionHelp",
                     "body": json.dumps(body, separators=(",", ":"))
                 }),
                 "h5st": True
             }
             status, res_data = await self.jd_api(await self.opt(opt))
             self.can_help = False
-            if res_data.get("success", False):
+            if status == 200 and res_data.get("success", False):
                 if data := res_data.get("data"):
                     helpResult = data.get("helpResult")
                     if helpResult == 1:
@@ -83,7 +83,7 @@ class Cash100UserClass(UserClass):
                 else:
                     self.printf_help(f"----->  {inviter.Name}:\t助力失败[{status}]：{str(res_data)}", inviter)
             else:
-                msg = res_data.get("errMsg", "")
+                msg = get_error_msg(res_data)
                 if "火爆" in msg:
                     self.can_help = False
                 self.printf_help(f"----->  {inviter.Name}:\t助力失败：{msg}", inviter)
@@ -91,6 +91,58 @@ class Cash100UserClass(UserClass):
                 inviter.need_help = False
         except:
             print_trace()
+
+    # async def help(self, inviter: UserClass):
+    #     try:
+    #         if self.pt_pin == inviter.pt_pin:
+    #             return
+    #         if not await self.is_login():
+    #             self.printf("未登录")
+    #             return
+    #         body = {"linkId": linkId, "isJdApp": True,
+    #                 "inviter": inviter.invite_code}
+    #         opt = {
+    #             "method": "get",
+    #             "functionId": "inviteFissionBeforeHome",
+    #             "body": body,
+    #             "appId": "02f8d",
+    #             "searchParams": self.searchParams({
+    #                 "functionId": "inviteFissionBeforeHome",
+    #                 "body": json.dumps(body, separators=(",", ":"))
+    #             }),
+    #             "h5st": True
+    #         }
+    #         status, res_data = await self.jd_api(await self.opt(opt))
+    #         self.can_help = False
+    #         if status == 200 and res_data.get("success", False):
+    #             if data := res_data.get("data"):
+    #                 helpResult = data.get("helpResult")
+    #                 if helpResult == 1:
+    #                     inviter.help_num += 1
+    #                     self.printf_help(f"----->  {inviter.Name}:\t助力成功", inviter)
+    #                 elif helpResult == 6:
+    #                     self.printf_help(f"----->  {inviter.Name}:\t助力过了", inviter)
+    #                 elif helpResult == 2:
+    #                     self.printf_help(f"----->  {inviter.Name}:\t活动太火爆", inviter)
+    #                 elif helpResult == 3:
+    #                     self.printf_help(f"----->  {inviter.Name}:\t没有助力次数了", inviter)
+    #                 elif helpResult is None:
+    #                     self.printf_help(f"----->  {inviter.Name}:\t助力失败：{str(res_data)}", inviter)
+    #                 else:
+    #                     self.printf_help(
+    #                         f"----->  {inviter.Name}:\t未知助力结果[{data.get('helpResult')}]：{str(res_data)}", inviter)
+    #             else:
+    #                 self.printf_help(f"----->  {inviter.Name}:\t助力失败[{status}]：{str(res_data)}", inviter)
+    #         else:
+    #             print(res_data)
+    #             msg = get_error_msg(res_data)
+    #             if "火爆" in msg:
+    #                 self.can_help = False
+    #             self.printf_help(f"----->  {inviter.Name}:\t助力失败：{msg}", inviter)
+    #         if inviter.help_num >= inviter.MAX_HELP_NUM:
+    #             inviter.need_help = False
+    #     except:
+    #         print_trace()
 
     async def get_invite_code(self):
         if not await self.is_login():
@@ -157,6 +209,6 @@ class Cash100UserClass(UserClass):
 if __name__ == '__main__':
     task = TaskClass("help")
     task.name = 'Cash100_HELP'
-    task.MAX_HELP_NUM = 12000
+    task.MAX_HELP_NUM = 300
     task.init_config(Cash100UserClass)
     asyncio.run(task.main("抽现金赢大礼-助力"))
