@@ -52,11 +52,11 @@ class Cash100UserClass(UserClass):
                     "inviter": inviter.invite_code}
             opt = {
                 "method": "get",
-                "functionId": "inviteFissionHelp",
+                "functionId": "inviteFissionhelp",
                 "body": body,
                 "appId": "c5389",
                 "searchParams": self.searchParams({
-                    "functionId": "inviteFissionHelp",
+                    "functionId": "inviteFissionhelp",
                     "body": json.dumps(body, separators=(",", ":"))
                 }),
                 "h5st": True
