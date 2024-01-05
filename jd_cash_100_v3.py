@@ -26,7 +26,7 @@ class Cash100UserClass(UserClass):
         self.activity_id = ""
         self.Origin = "https://prodev.m.jd.com"
         self.referer = "https://prodev.m.jd.com/"
-        self.H5ST_VERSION = "4_1"
+        self.H5ST_VERSION = "4_2"
         self.invite_code = ''
         self.draw_num = 0
         self.ua = self.ep_UA
