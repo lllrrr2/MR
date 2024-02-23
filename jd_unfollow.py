@@ -1,5 +1,5 @@
 '''
-new Env('取关商品');
+new Env('取关商品'); 
 cron: 6 6 6 6 6 python3 jd_unfollow.py
 export RabbitToken="token值"
 '''
